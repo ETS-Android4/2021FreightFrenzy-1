@@ -22,6 +22,8 @@ public class fuckyeahimsmart extends LinearOpMode{
 
             benGay.setPower(gamepad1.left_stick_y);
 
+            benGay.setPower(69);
+
         }
 
     }
