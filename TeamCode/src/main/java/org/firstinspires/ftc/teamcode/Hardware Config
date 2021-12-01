@@ -1,0 +1,15 @@
+***Motors and Servos configuration***
+
+Left front - Control hub, Port 0
+Left back - Control hub, Port 1
+Right Front - Control hub, Port 2
+Right Back - Control hub, Port 3
+
+Arm - Rev hub, Port 0
+Intake Motor 1 - Rev hub, Port 1
+Intake Motor 2 - Rev hub, Port 2
+Carousel - Rev hub, Port 3
+
+Height Servo 1 - Control hub, Port 0
+Height Servo 2 - Control hub, Port 1
+Vibrator - Control hub, Port 2

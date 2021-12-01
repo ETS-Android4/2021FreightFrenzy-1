@@ -6,19 +6,23 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 @TeleOp(name="Push Bot Test", group="Linear Opmode")
 
 public class MainTeleOp extends LinearOpMode{
 
+    private boolean intakeFlagFoward = false;
+    private boolean intakeFlagReverse = false;
+
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
-        //Carousel.initCarousel(hardwareMap);
+        Carousel.initCarousel(hardwareMap);
         Arm.initArm(hardwareMap);
+        Intake.initIntake(hardwareMap);
 
         waitForStart();
 
-        boolean adjust = false;
         while(opModeIsActive()){
 
             DriveTrain.cartesianDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
@@ -60,7 +64,25 @@ public class MainTeleOp extends LinearOpMode{
                 Arm.moveArm(.4);
             }
 
+            //Intake forward
+            if (gamepad1.x && !intakeFlagFoward) {
+                intakeFlagFoward = true;
+                Intake.intakeChangeState("FORWARD");
+            }
+            //Intake backwards
+            else if (gamepad1.b && !intakeFlagReverse){
+                intakeFlagReverse = true;
+                Intake.intakeChangeState("REVERSE");
+            }
 
+            //Reset intakes flags
+            if(intakeFlagFoward && !gamepad1.x){
+                intakeFlagFoward = false;
+            } else if(intakeFlagReverse && !gamepad1.b){
+                intakeFlagReverse = false;
+            }
+
+            Intake.intakeUpdatePosition();
 
             //telemetry.addData("Adjust: ", adjust);
             //telemetry.addData("Carousel Power: ", Carousel.getCarouselPower());

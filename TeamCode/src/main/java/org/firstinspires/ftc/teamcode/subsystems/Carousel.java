@@ -5,10 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Carousel {
+    //Motors
     public static DcMotor carouselMotor;
 
+    //Powers
     private static double carouselPower = 0.0;
 
+    //Constructor
     public Carousel(){};
 
     public static void initCarousel(HardwareMap hwm){
