@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -26,6 +28,10 @@ public class DriveTrain {
     public static BNO055IMU imu;
     public static Orientation angles;
     public static Acceleration gravity;
+
+    //Turning
+    private static double driveTrainError = 0;
+    private static double driveTrainPower = 0;
 
     //Constructor
     public DriveTrain(){}
@@ -106,8 +112,193 @@ public class DriveTrain {
         rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER);
         leftBack.setPower((speed * adjustedXHeading + rotation) * Constants.TELEOP_LIMITER);
         rightBack.setPower((speed * adjustedYHeading - rotation) * Constants.TELEOP_LIMITER);
+
     }
 
+    //This is our autonomous cartesian drive method. It utilizes the same math as the normal cartesian drive method
+    public static void cartesianDriveTimer(double x, double y, int timerLength) throws InterruptedException {
+        y = -y;
+        double speed = Math.sqrt(2) * Math.hypot(x, y);
+        double command = Math.atan2(y, -x) + Math.PI/2;
+        double rotation = 0;
+        double startingHeading = angles.firstAngle;
+        double currentError = 0;
+        double adjustedXHeading = 0;
+        double adjustedYHeading = 0;
+
+
+        while(timerLength > 0) {
+            angles = DriveTrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+            adjustedXHeading = Math.cos(command + angles.firstAngle + Math.PI / 4);
+            adjustedYHeading = Math.sin(command + angles.firstAngle + Math.PI / 4);
+
+            currentError = angles.firstAngle - startingHeading;
+
+            if(Math.abs(currentError) > (Math.PI / 12)){
+                rotation = 0.40;
+            }
+            else{
+                if(Math.abs(currentError) > (Math.PI / 180)){
+                    rotation = Math.abs(currentError / 0.6);
+                }
+                else{
+                    rotation = 0;
+                }
+            }
+
+            if(currentError < 0){
+                rotation = rotation * -1;
+            }
+
+            leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER);
+            rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER);
+            leftBack.setPower((speed * adjustedXHeading + rotation) * Constants.TELEOP_LIMITER);
+            rightBack.setPower((speed * adjustedYHeading - rotation) * Constants.TELEOP_LIMITER);
+            Thread.sleep(20);
+            timerLength--;
+        }
+
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
+    }
+
+    //Turn using the gyro in auto
+    public static void gyroTurn(double finalAngle, int timer){
+        int turnTimer = timer;
+        while (Math.abs(DriveTrain.angles.firstAngle - (finalAngle)) > (Math.PI / 60) && turnTimer > 0){
+            driveTrainError = angles.firstAngle - finalAngle;
+            if(Math.abs(driveTrainError) > (Math.PI / 6)){
+                driveTrainPower = 0.5;
+            }
+            else{
+                if(Math.abs(driveTrainError) < (Math.PI / 60)){//60
+                    driveTrainPower = 0;
+                }
+                else if(Math.abs(driveTrainError) > (Math.PI / 60)) {//60
+                    driveTrainPower = Math.abs(driveTrainError / (Math.PI / 2)) + 0.1;
+                }
+            }
+            driveTrainError = angles.firstAngle - finalAngle;
+            if(driveTrainError > 0){
+                cartesianDrive(0, 0, driveTrainPower);
+            }
+            else if(driveTrainError < 0){
+                cartesianDrive(0, 0, -driveTrainPower);
+            }
+            turnTimer--;
+        }
+        DriveTrain.rightFront.setPower(0);
+        DriveTrain.rightBack.setPower(0);
+        DriveTrain.leftFront.setPower(0);
+        DriveTrain.leftBack.setPower(0);
+    }
+
+    //This is our favorite method by far. It sets the encoder positions to zero and stays there. This way, we can move at the end of auto.
+    public static void SUMO_MODE(){
+        DriveTrain.leftFront.setTargetPosition(0);
+        DriveTrain.leftBack.setTargetPosition(0);
+        DriveTrain.rightFront.setTargetPosition(0);
+        DriveTrain.rightBack.setTargetPosition(0);
+        DriveTrain.setRunMode("RUN_TO_POSITION");
+        DriveTrain.leftFront.setPower(0.8);
+        DriveTrain.leftBack.setPower(0.8);
+        DriveTrain.rightFront.setPower(0.8);
+        DriveTrain.rightBack.setPower(0.8);
+    }
+
+    public static void setRunMode(String input) {
+        if (input.equals("STOP_AND_RESET_ENCODER")) {
+            leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        if (input.equals("RUN_WITHOUT_ENCODER")) {
+            leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        if (input.equals("RUN_USING_ENCODER")) {
+            leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        if (input.equals("RUN_TO_POSITION")) {
+            leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+    }
+
+    public static void composeTelemetry (Telemetry telemetry) {
+
+        telemetry.addAction(new Runnable() {
+            @Override
+            public void run() {
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+                gravity = imu.getGravity();
+            }
+        });
+        telemetry.addLine()
+                .addData("status", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return imu.getSystemStatus().toShortString();
+                    }
+                })
+                .addData("calib", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return imu.getCalibrationStatus().toString();
+                    }
+                });
+        telemetry.addLine()
+                .addData("heading", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return formatAngle(angles.angleUnit, angles.firstAngle);
+                    }
+                })
+                .addData("roll", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return formatAngle(angles.angleUnit, angles.secondAngle);
+                    }
+                })
+                .addData("pitch", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return formatAngle(angles.angleUnit, angles.thirdAngle);
+                    }
+                });
+
+        telemetry.addLine()
+                .addData("grvty", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return gravity.toString();
+                    }
+                })
+                .addData("mag", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.format(Locale.getDefault(), "%.3f",
+                                Math.sqrt(gravity.xAccel * gravity.xAccel
+                                        + gravity.yAccel * gravity.yAccel
+                                        + gravity.zAccel * gravity.zAccel));
+                    }
+                });
+    }
+
+    public static void gyroTele(Telemetry telemetry){
+        telemetry.addData("Heading: ", formatAngle(angles.angleUnit, angles.firstAngle));
+    }
     static String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.RADIANS.fromUnit(angleUnit, angle));
     }

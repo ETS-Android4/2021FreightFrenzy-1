@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.bells;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,7 +21,6 @@ public class Bells {
     public static void initBells(HardwareMap hwm){
         //Declare Motors on hardware map
         bellsServo = hwm.get(CRServo.class, "bellsServo");
-        //bellsServo.setPower(0);
     }
 
     public static void spinBells(double power){

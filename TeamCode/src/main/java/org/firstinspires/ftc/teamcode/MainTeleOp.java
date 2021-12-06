@@ -17,9 +17,9 @@ public class MainTeleOp extends LinearOpMode{
 
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
-        Carousel.initCarousel(hardwareMap);
-        Arm.initArm(hardwareMap);
-        Intake.initIntake(hardwareMap);
+        //Carousel.initCarousel(hardwareMap);
+        //Arm.initArm(hardwareMap);
+        //Intake.initIntake(hardwareMap);
 
         waitForStart();
 
@@ -30,6 +30,21 @@ public class MainTeleOp extends LinearOpMode{
             if(gamepad1.dpad_up){
                 DriveTrain.resetGyro();
             }
+
+            if(gamepad1.a) {
+                DriveTrain.leftFront.setPower(.8);
+                DriveTrain.leftBack.setPower(.8);
+                DriveTrain.rightFront.setPower(.8);
+                DriveTrain.rightBack.setPower(.8);
+            }
+            if(gamepad1.b) {
+                DriveTrain.leftFront.setPower(.2);
+                DriveTrain.leftBack.setPower(.2);
+                DriveTrain.rightFront.setPower(.2);
+                DriveTrain.rightBack.setPower(.2);
+            }
+
+
 
             /*if(gamepad2.x){
                 while(gamepad2.x){}
@@ -57,7 +72,7 @@ public class MainTeleOp extends LinearOpMode{
             }
             */
 
-            if(gamepad1.y){
+            /*if(gamepad1.y){
                 Arm.moveArm(.6);
             }
             if(gamepad1.a){
@@ -84,8 +99,17 @@ public class MainTeleOp extends LinearOpMode{
 
             Intake.intakeUpdatePosition();
 
+             */
+
             //telemetry.addData("Adjust: ", adjust);
             //telemetry.addData("Carousel Power: ", Carousel.getCarouselPower());
+            //DriveTrain.composeTelemetry(telemetry);
+            telemetry.addData("Left front encoder: ", DriveTrain.leftFront.getCurrentPosition());
+            telemetry.addData("Left back encoder: ", DriveTrain.leftBack.getCurrentPosition());
+            telemetry.addData("Right front encoder: ", DriveTrain.rightFront.getCurrentPosition());
+            telemetry.addData("Right back encoder: ", DriveTrain.rightBack.getCurrentPosition());
+
+            DriveTrain.gyroTele(telemetry);
             telemetry.update();
         }
     }

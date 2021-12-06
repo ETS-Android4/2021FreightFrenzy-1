@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 public class Constants {
-    public static final double TELEOP_LIMITER = 0.8;
+    public static final double TELEOP_LIMITER = 0.7;
 
 }
