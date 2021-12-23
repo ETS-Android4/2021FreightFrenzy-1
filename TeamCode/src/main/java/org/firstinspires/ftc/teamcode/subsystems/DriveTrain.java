@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -29,6 +30,9 @@ public class DriveTrain {
     public static Orientation angles;
     public static Acceleration gravity;
 
+    //Sensors
+    public static DistanceSensor towerSensor;
+
     //Turning
     private static double driveTrainError = 0;
     private static double driveTrainPower = 0;
@@ -45,6 +49,8 @@ public class DriveTrain {
         rightBack = hwm.get(DcMotor.class, "rightBack");
 
         imu = hwm.get(BNO055IMU.class, "imu");
+
+        towerSensor = hwm.get(DistanceSensor.class, "towerSensor");
 
         //Reverse Motors
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);

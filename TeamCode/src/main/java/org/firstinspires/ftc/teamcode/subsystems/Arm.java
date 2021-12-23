@@ -28,17 +28,17 @@ public class Arm {
 
     public static void initArm(HardwareMap hwm){
         //Declare Motors on hardware map
-        arm = hwm.get(DcMotor.class, "arm");
+        //arm = hwm.get(DcMotor.class, "arm");
 
         heightServo1 = hwm.get(Servo.class, "heightServo1");
         heightServo2 = hwm.get(Servo.class, "heightServo2");
-        vibrator = hwm.get(Servo.class, "vibrator");
+        //vibrator = hwm.get(Servo.class, "vibrator");
         //Reverse Motors
 
         //Init Servos
         heightServo1.setPosition(ARM_DOWN);
         heightServo2.setPosition(ARM_DOWN);
-        vibrator.setPosition(VIBRATOR_CLOSED);
+        //vibrator.setPosition(VIBRATOR_CLOSED);
     }
 
     public static void moveArm(double newHeight){

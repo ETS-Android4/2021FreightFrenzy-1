@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
@@ -14,13 +15,15 @@ public class MainTeleOp extends LinearOpMode{
 
     private boolean intakeFlagFoward = false;
     private boolean intakeFlagReverse = false;
+    private boolean carouselFlag = false;
 
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
-        //Carousel.initCarousel(hardwareMap);
+        Carousel.initCarousel(hardwareMap);
         //Arm.initArm(hardwareMap);
         //Intake.initIntake(hardwareMap);
 
+        boolean adjust = false;
         waitForStart();
 
         while(opModeIsActive()){
@@ -30,21 +33,6 @@ public class MainTeleOp extends LinearOpMode{
             if(gamepad1.dpad_up){
                 DriveTrain.resetGyro();
             }
-
-            if(gamepad1.a) {
-                DriveTrain.leftFront.setPower(.8);
-                DriveTrain.leftBack.setPower(.8);
-                DriveTrain.rightFront.setPower(.8);
-                DriveTrain.rightBack.setPower(.8);
-            }
-            if(gamepad1.b) {
-                DriveTrain.leftFront.setPower(.2);
-                DriveTrain.leftBack.setPower(.2);
-                DriveTrain.rightFront.setPower(.2);
-                DriveTrain.rightBack.setPower(.2);
-            }
-
-
 
             /*if(gamepad2.x){
                 while(gamepad2.x){}
@@ -101,13 +89,41 @@ public class MainTeleOp extends LinearOpMode{
 
              */
 
+            //Change carousel color
+            if(gamepad2.left_bumper){
+                Carousel.changeColor("BLUE");
+            }
+            if(gamepad2.right_bumper){
+                Carousel.changeColor("RED");
+            }
+
+            //Change carousel state
+            if (gamepad2.x && !carouselFlag) {
+                carouselFlag = true;
+                Carousel.carouselChangeState();
+            }
+
+            //Reset carousel flags
+            if(carouselFlag && !gamepad2.x){
+                carouselFlag = false;
+            }
+
+
+            //Update Carousel State
+            Carousel.carouselUpdatePosition();
+
             //telemetry.addData("Adjust: ", adjust);
-            //telemetry.addData("Carousel Power: ", Carousel.getCarouselPower());
+            telemetry.addData("Carousel Power: ", Carousel.getCarouselPower());
             //DriveTrain.composeTelemetry(telemetry);
             telemetry.addData("Left front encoder: ", DriveTrain.leftFront.getCurrentPosition());
             telemetry.addData("Left back encoder: ", DriveTrain.leftBack.getCurrentPosition());
             telemetry.addData("Right front encoder: ", DriveTrain.rightFront.getCurrentPosition());
             telemetry.addData("Right back encoder: ", DriveTrain.rightBack.getCurrentPosition());
+            telemetry.addData("Color: ", Carousel.getColor());
+
+            telemetry.addData("Carousel state: ", Carousel.getState());
+
+            telemetry.addData("tower distance", DriveTrain.towerSensor.getDistance(DistanceUnit.CM));
 
             DriveTrain.gyroTele(telemetry);
             telemetry.update();
