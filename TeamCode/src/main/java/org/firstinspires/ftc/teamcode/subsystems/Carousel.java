@@ -14,7 +14,7 @@ public class Carousel {
     private static final double CAROUSEL_POWER = 0.21;
 
     //States
-    private static Carousel.CAROUSEL_STATE currentState = Carousel.CAROUSEL_STATE.OFF;
+    private static CAROUSEL_STATE currentState = CAROUSEL_STATE.OFF;
 
     private enum CAROUSEL_STATE{
         RED,
@@ -107,15 +107,15 @@ public class Carousel {
     }
 
     //Updates the powers for the intake based on the states above
-    public static void carouselUpdatePosition() throws InterruptedException{
+    public static void carouselUpdatePosition(double p1) throws InterruptedException{
         if(currentState == Carousel.CAROUSEL_STATE.OFF){
             stop();
         }
         else if (currentState == Carousel.CAROUSEL_STATE.RED){
-            spin(CAROUSEL_POWER);
+            spin(p1 * CAROUSEL_POWER);
         }
         else if(currentState == Carousel.CAROUSEL_STATE.BLUE){
-            spin(-CAROUSEL_POWER);
+            spin(-p1 * CAROUSEL_POWER);
         }
     }
 
