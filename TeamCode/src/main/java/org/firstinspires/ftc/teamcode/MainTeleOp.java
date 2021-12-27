@@ -23,8 +23,8 @@ public class MainTeleOp extends LinearOpMode{
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
         Carousel.initCarousel(hardwareMap);
-        //Arm.initArm(hardwareMap);
-        //Intake.initIntake(hardwareMap);
+        Arm.initArm(hardwareMap);
+        Intake.initIntake(hardwareMap);
 
         boolean adjust = false;
         waitForStart();
@@ -51,9 +51,9 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             //Reset intakes flags
-            if(intakeFlagFoward && !gamepad1.x){
+            if(intakeFlagFoward && !gamepad2.x){
                 intakeFlagFoward = false;
-            } else if(intakeFlagReverse && !gamepad1.b){
+            } else if(intakeFlagReverse && !gamepad2.b){
                 intakeFlagReverse = false;
             }
 
@@ -106,10 +106,10 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             //Reset arm flags
-            if(armFlagFast && !gamepad1.y){
+            if(armFlagFast && !gamepad2.y){
                 armFlagFast = false;
             }
-            if(armFlagSlow && !gamepad1.a){
+            if(armFlagSlow && !gamepad2.a){
                 armFlagSlow = false;
             }
 
@@ -122,7 +122,7 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             //Reset height flag
-            if(heightFlag && !gamepad1.dpad_right){
+            if(heightFlag && !gamepad2.dpad_up){
                 heightFlag = false;
             }
 
@@ -146,7 +146,7 @@ public class MainTeleOp extends LinearOpMode{
             telemetry.addData("Carousel state: ", Carousel.getState());
 
             telemetry.addData("tower distance", DriveTrain.towerSensor.getDistance(DistanceUnit.CM));
-
+            telemetry.addData("arm state", Arm.getArmState());
             DriveTrain.gyroTele(telemetry);
             telemetry.update();
         }

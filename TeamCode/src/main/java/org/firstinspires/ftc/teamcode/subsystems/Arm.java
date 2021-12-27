@@ -20,8 +20,8 @@ public class Arm {
     private static final double VIBRATOR_OPEN = 0.58;
 
     //Constants for height servos
-    private static final double ARM_DOWN = .4;
-    private static final double ARM_UP = .6;
+    private static final double ARM_DOWN = 0.7;
+    private static final double ARM_UP = 0.35;
 
     //States
     private static ARM_STATE currentArmState = ARM_STATE.IN;
@@ -88,6 +88,10 @@ public class Arm {
         arm.setPower(0);
     }
 
+    public static ARM_STATE getArmState(){
+        return currentArmState;
+    }
+
     //Changes the state of the intake based on the input
     public static void heightChangeState(){
         if(currentHeightState == HEIGHT_STATE.DOWN){
@@ -120,7 +124,7 @@ public class Arm {
     }
 
     //Updates the powers for the intake based on the states above
-    public static void heightUpdatePosition() throws InterruptedException{
+    public static void heightUpdatePosition() {
         if(currentHeightState == HEIGHT_STATE.DOWN){
             armDown();
         }
@@ -140,13 +144,13 @@ public class Arm {
             slideArm(.2);
         }
         else if(currentArmState == ARM_STATE.OUT_FAST){
-            slideArm(.6);
+            slideArm(-.6);
         }
         else if(currentArmState == ARM_STATE.IN_SLOW){
             slideArm(-.2);
         }
         else if(currentArmState == ARM_STATE.IN_FAST){
-            slideArm(-.6);
+            slideArm(.6);
         }
     }
 }
