@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-@TeleOp(name="Push Bot Test", group="Linear Opmode")
+@TeleOp(name="TeleOop", group="Linear Opmode")
 
 public class MainTeleOp extends LinearOpMode{
 
@@ -18,7 +18,10 @@ public class MainTeleOp extends LinearOpMode{
     private boolean carouselFlag = false;
     private boolean armFlagFast = false;
     private boolean armFlagSlow = false;
+    private boolean armFlag = false;
     private boolean heightFlag = false;
+    private boolean manualHeight = false;
+    private boolean manualHeightFlag = false;
 
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
@@ -26,7 +29,6 @@ public class MainTeleOp extends LinearOpMode{
         Arm.initArm(hardwareMap);
         Intake.initIntake(hardwareMap);
 
-        boolean adjust = false;
         waitForStart();
 
         while(opModeIsActive()){
@@ -52,25 +54,14 @@ public class MainTeleOp extends LinearOpMode{
 
             //Reset intakes flags
             if(intakeFlagFoward && !gamepad2.x){
+                Intake.intakeChangeState("FORWARD");
                 intakeFlagFoward = false;
             } else if(intakeFlagReverse && !gamepad2.b){
+                Intake.intakeChangeState("REVERSE");
                 intakeFlagReverse = false;
             }
 
 
-
-            /*
-            //Change carousel state
-            if (gamepad2.x && !carouselFlag) {
-                carouselFlag = true;
-                Carousel.carouselChangeState();
-            }
-
-            //Reset carousel flags
-            if(carouselFlag && !gamepad2.x){
-                carouselFlag = false;
-            }
-            */
 
             //Change carousel color
             if(gamepad1.left_bumper){
@@ -93,61 +84,139 @@ public class MainTeleOp extends LinearOpMode{
             }
 
 
+            //Change arm speed
+            if(gamepad2.left_bumper){
+                Arm.changeSpeed("SLOW");
+            }
+            if(gamepad2.right_bumper){
+                Arm.changeSpeed("FAST");
+            }
 
             //Extend/retract arm fast
-            if (gamepad2.y && !armFlagFast) {
+            if (gamepad2.right_trigger > .2 && !armFlagFast) {
                 armFlagFast = true;
-                Arm.armChangeState("FAST");
+                Arm.armChangeState("OUT");
             }
             //Extend/retract arm fast
-            else if (gamepad2.a && !armFlagSlow){
+            else if (gamepad2.left_trigger > .2 && !armFlagSlow){
                 armFlagSlow = true;
-                Arm.armChangeState("SLOW");
+                Arm.armChangeState("IN");
             }
 
             //Reset arm flags
-            if(armFlagFast && !gamepad2.y){
+            if(armFlagFast && gamepad2.right_trigger <= .2){
                 armFlagFast = false;
+                Arm.armChangeState("N/A");
             }
-            if(armFlagSlow && !gamepad2.a){
+            if(armFlagSlow && gamepad2.left_trigger <= .2){
                 armFlagSlow = false;
+                Arm.armChangeState("N/A");
             }
+
+            //Arm Out Up
+            /*if(gamepad2.y && !armFlag){
+                armFlag = true;
+                Arm.armChangeState("N/A");
+            }
+
+            if(armFlag && !gamepad2.y){
+                armFlag = false;
+            }*/
 
 
 
             //Raise and lower arm
-            if(gamepad2.dpad_up && !heightFlag){
+            if(gamepad2.dpad_up && !heightFlag) {
                 heightFlag = true;
-                Arm.heightChangeState();
+                manualHeight = false;
+                Arm.heightChangeState("UP");
+            } else if(gamepad2.dpad_right && !heightFlag){
+                heightFlag = true;
+                manualHeight = false;
+                Arm.heightChangeState("MID");
+            } else if(gamepad2.dpad_down && !heightFlag){
+                heightFlag = true;
+                manualHeight = false;
+                Arm.heightChangeState("DOWN");
+            } /*else if(gamepad2.dpad_left && !heightFlag){
+                heightFlag = true;
+                Arm.heightChangeState("MAX");
+            }*/
+            else if(gamepad2.left_stick_y > .3 && !heightFlag){
+                heightFlag = true;
+                manualHeight = false;
+                Arm.heightChangeState("MAX");
             }
 
             //Reset height flag
-            if(heightFlag && !gamepad2.dpad_up){
+            if(heightFlag && !gamepad2.dpad_up && !gamepad2.dpad_right && !gamepad2.dpad_down  && gamepad2.left_stick_y <= .3/* && !gamepad2.dpad_left*/){
                 heightFlag = false;
             }
 
+            if(gamepad2.dpad_left) {
+                Arm.releaseFreight();
+            }
+
+            if(gamepad2.right_stick_y < -.2 && !manualHeightFlag){
+                if(Arm.heightServo1.getPosition() >= .2) {
+                    manualHeightFlag = true;
+                    manualHeight = true;
+                    Arm.moveArm(Arm.heightServo1.getPosition() - .01);
+                }
+            } else if(gamepad2.right_stick_y > .2 && !manualHeightFlag){
+                if(Arm.heightServo1.getPosition() <= .8) {
+                    manualHeightFlag = true;
+                    manualHeight = true;
+                    Arm.moveArm(Arm.heightServo1.getPosition() + .01);
+                }
+            }
+
+            if(gamepad2.right_stick_y <= .2 && gamepad2.right_stick_y >= -.2){
+                manualHeightFlag = false;
+            }
 
 
             //Update States
             Carousel.carouselUpdatePosition(gamepad1.right_trigger);
             Arm.armUpdatePosition();
-            Arm.heightUpdatePosition();
             Intake.intakeUpdatePosition();
+            if(!manualHeight)
+                Arm.heightUpdatePosition();
 
-            //telemetry.addData("Adjust: ", adjust);
-            telemetry.addData("Carousel Power: ", Carousel.getCarouselPower());
+            /*
             //DriveTrain.composeTelemetry(telemetry);
             telemetry.addData("Left front encoder: ", DriveTrain.leftFront.getCurrentPosition());
             telemetry.addData("Left back encoder: ", DriveTrain.leftBack.getCurrentPosition());
             telemetry.addData("Right front encoder: ", DriveTrain.rightFront.getCurrentPosition());
             telemetry.addData("Right back encoder: ", DriveTrain.rightBack.getCurrentPosition());
             telemetry.addData("Color: ", Carousel.getColor());
-
-            telemetry.addData("Carousel state: ", Carousel.getState());
-
-            telemetry.addData("tower distance", DriveTrain.towerSensor.getDistance(DistanceUnit.CM));
+            //telemetry.addData("Carousel state: ", Carousel.getState());
             telemetry.addData("arm state", Arm.getArmState());
+            telemetry.addData("arm encoder pos: ", Arm.arm.getCurrentPosition());
+            //telemetry.addData("arm speed: ", Arm.getSpeed());
+            telemetry.addData("height servo pos: ", Arm.heightServo1.getPosition());
             DriveTrain.gyroTele(telemetry);
+            */
+
+            telemetry.addLine()
+                    .addData("Floor color", " sensor")
+                    .addData("Red", "%.3f", (double) DriveTrain.floorColorSensor.red())
+                    .addData("Blue", "%.3f", (double) DriveTrain.floorColorSensor.blue())
+                    .addData("Alpha", "%.3f", (double) DriveTrain.floorColorSensor.alpha());
+            telemetry.addLine()
+                    .addData("Intake front", " sensor")
+                    .addData("Red", "%.3f", (double) Intake.intakeFrontSensor.red())
+                    .addData("Blue", "%.3f", (double) Intake.intakeFrontSensor.blue())
+                    .addData("Alpha", "%.3f", (double) Intake.intakeFrontSensor.alpha());
+            telemetry.addLine()
+                    .addData("Intake back", " sensor")
+                    .addData("Red", "%.3f", (double) Intake.intakeBackSensor.red())
+                    .addData("Blue", "%.3f", (double) Intake.intakeBackSensor.blue())
+                    .addData("Alpha", "%.3f", (double) Intake.intakeBackSensor.alpha());
+            telemetry.addData("Distance to gondola: ", Arm.armSensor.getDistance(DistanceUnit.CM));
+
+            DriveTrain.gyroTele(telemetry);
+
             telemetry.update();
         }
     }

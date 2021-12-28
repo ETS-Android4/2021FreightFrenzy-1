@@ -15,19 +15,23 @@ public class AutoTest extends LinearOpMode {
 
         waitForStart();
 
-        DriveTrain.cartesianDriveTimer(0, .3, 40);
+        //DriveTrain.cartesianDriveTimer(0, .3, 40);
+        DriveTrain.driveToLine(.25,"WHITE", telemetry);
+
+        DriveTrain.autoBrake(5);
 
         sleep(100);
 
-        DriveTrain.gyroTurn(-Math.PI / 2, 100);
 
-        sleep(100);
+        //DriveTrain.gyroTurn(-Math.PI / 2, 100);
 
-        DriveTrain.setRunMode("STOP_AND_RESET_ENCODER");
+        //sleep(100);
+
+        /*DriveTrain.setRunMode("STOP_AND_RESET_ENCODER");
 
         while(opModeIsActive()) {
             DriveTrain.SUMO_MODE();
         }
-
+        */
     }
 }

@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake {
     //Declare motors
-    public static DcMotor intake1;
-    public static DcMotor intake2;
+    public static DcMotor intakeFront;
+    public static DcMotor intakeBack;
+
+    //Declare Sensors
+    public static ColorSensor intakeFrontSensor;
+    public static ColorSensor intakeBackSensor;
 
     //Intake constants
     private static final double INTAKE_POWER = 0.95;
@@ -25,37 +30,40 @@ public class Intake {
 
     public static void initIntake(HardwareMap hwm){
         //Declare Motors on hardware map
-        intake1 = hwm.get(DcMotor.class, "intake1");
-        intake2 = hwm.get(DcMotor.class, "intake2");
+        intakeFront = hwm.get(DcMotor.class, "intakeFront");
+        intakeBack = hwm.get(DcMotor.class, "intakeBack");
+
+        intakeFrontSensor = hwm.get(ColorSensor.class, "intakeFrontSensor");
+        intakeBackSensor = hwm.get(ColorSensor.class, "intakeBackSensor");
     }
 
     //Intake forwards
     public static void intake() throws InterruptedException {
-        intake1.setPower(INTAKE_POWER);
-        intake2.setPower(INTAKE_POWER);
+        intakeFront.setPower(INTAKE_POWER);
+        intakeBack.setPower(INTAKE_POWER);
     }
 
     //Intake backwards
     public static void setBackwards(){
-        intake1.setPower(-INTAKE_POWER);
-        intake2.setPower(-INTAKE_POWER);
+        intakeFront.setPower(-INTAKE_POWER);
+        intakeBack.setPower(-INTAKE_POWER);
     }
 
     //Stop the intake
     public static void stop(){
-        intake1.setPower(0);
-        intake2.setPower(0);
+        intakeFront.setPower(0);
+        intakeBack.setPower(0);
     }
 
     //Changes the state of the intake based on the input
     public static void intakeChangeState(String direction){
-        if(currentState == INTAKE_STATE.OFF && direction.equals("FORWARD")){
+        if(currentState == INTAKE_STATE.OFF && direction.equals("FORWARD") && Arm.armIsIn()){
             currentState = INTAKE_STATE.INTAKE;
         }
         else if (currentState == INTAKE_STATE.INTAKE){
             currentState = INTAKE_STATE.OFF;
         }
-        else if(currentState == INTAKE_STATE.OFF && direction.equals("REVERSE")){
+        else if(currentState == INTAKE_STATE.OFF && direction.equals("REVERSE") && Arm.armIsIn()){
             currentState = INTAKE_STATE.BACKWARDS;
         }
         else if(currentState == INTAKE_STATE.BACKWARDS){

@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -31,7 +33,7 @@ public class DriveTrain {
     public static Acceleration gravity;
 
     //Sensors
-    public static DistanceSensor towerSensor;
+    public static ColorSensor floorColorSensor;
 
     //Turning
     private static double driveTrainError = 0;
@@ -50,7 +52,7 @@ public class DriveTrain {
 
         imu = hwm.get(BNO055IMU.class, "imu");
 
-        towerSensor = hwm.get(DistanceSensor.class, "towerSensor");
+        floorColorSensor = hwm.get(ColorSensor.class, "floorColorSensor");
 
         //Reverse Motors
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -202,6 +204,71 @@ public class DriveTrain {
         DriveTrain.leftBack.setPower(0);
     }
 
+    public static void driveToLine(double power, String color, Telemetry telemetry) throws InterruptedException {
+        double minBlue = Double.MAX_VALUE;
+        double maxBlue = Double.MIN_VALUE;
+
+        double minWhite = Double.MAX_VALUE;
+        double maxWhite = Double.MIN_VALUE;
+        if(color.equals("RED")){
+            while(floorColorSensor.red() < 1350){ //1600
+                leftFront.setPower(power);
+                rightFront.setPower(power);
+                leftBack.setPower(power);
+                rightBack.setPower(power);
+            }
+            leftFront.setPower(0);
+            rightFront.setPower(0);
+            leftBack.setPower(0);
+            rightBack.setPower(0);
+        }
+        else if(color.equals("BLUE")){
+            while(floorColorSensor.blue() < 1600){//2100
+                if(DriveTrain.floorColorSensor.blue() > maxBlue){
+                    maxBlue = DriveTrain.floorColorSensor.blue();
+                }
+
+                if (DriveTrain.floorColorSensor.blue() < minBlue){
+                    minBlue = DriveTrain.floorColorSensor.blue();
+                }
+                telemetry.addData("Max Blue: ", maxBlue);
+                telemetry.addData("Min Blue: ", minBlue);
+                telemetry.update();
+                leftFront.setPower(power);
+                rightFront.setPower(power);
+                leftBack.setPower(power);
+                rightBack.setPower(power);
+            }
+            leftFront.setPower(0);
+            rightFront.setPower(0);
+            leftBack.setPower(0);
+            rightBack.setPower(0);
+        }
+        else if(color.equals("WHITE")) {
+            while(floorColorSensor.alpha() < 120){//480, 680
+                if(DriveTrain.floorColorSensor.alpha() > maxWhite){
+                    maxWhite = DriveTrain.floorColorSensor.alpha();
+                }
+
+                if (DriveTrain.floorColorSensor.alpha() < minWhite){
+                    minWhite = DriveTrain.floorColorSensor.alpha();
+                }
+                leftFront.setPower(power);
+                rightFront.setPower(power);
+                leftBack.setPower(power);
+                rightBack.setPower(power);
+//                Intake.releaseAll();
+                telemetry.addData("Max White: ", maxWhite);
+                telemetry.addData("Min White: ", minWhite);
+                telemetry.update();
+            }
+            leftFront.setPower(0);
+            rightFront.setPower(0);
+            leftBack.setPower(0);
+            rightBack.setPower(0);
+        }
+    }
+
     //This is our favorite method by far. It sets the encoder positions to zero and stays there. This way, we can move at the end of auto.
     public static void SUMO_MODE(){
         DriveTrain.leftFront.setTargetPosition(0);
@@ -213,6 +280,23 @@ public class DriveTrain {
         DriveTrain.leftBack.setPower(0.8);
         DriveTrain.rightFront.setPower(0.8);
         DriveTrain.rightBack.setPower(0.8);
+    }
+
+    public static void autoBrake(int timer){
+        double currentPower = leftFront.getPower();
+        double power = -currentPower * 2;
+
+        while(timer > 0) {
+            leftFront.setPower(power);
+            leftBack.setPower(power);
+            rightFront.setPower(power);
+            rightBack.setPower(power);
+            timer--;
+        }
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
     }
 
     public static void setRunMode(String input) {

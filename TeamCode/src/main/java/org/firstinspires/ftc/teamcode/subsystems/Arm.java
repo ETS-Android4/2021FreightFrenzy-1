@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -15,13 +16,24 @@ public class Arm {
     public static Servo heightServo2;
     public static Servo vibrator;
 
+    //Sensors
+    public static DistanceSensor armSensor;
+    //public static DistanceSensor gondolaSensor;
+
     //Constants for flicker servo
-    private static final double VIBRATOR_CLOSED = 0.4;
-    private static final double VIBRATOR_OPEN = 0.58;
+    private static final double VIBRATOR_CLOSED = 0.14;
+    private static final double VIBRATOR_OPEN = 0.4;
 
     //Constants for height servos
-    private static final double ARM_DOWN = 0.7;
+    private static final double ARM_DOWN = 0.65;
     private static final double ARM_UP = 0.35;
+    private static final double ARM_MID = 0.5;
+    private static final double ARM_MAX = 0.2;
+
+    //Constants for arm powers
+    private static final double ARM_FAST = .6;
+    private static final double ARM_SLOW = .2;
+    private static String speed = "FAST";
 
     //States
     private static ARM_STATE currentArmState = ARM_STATE.IN;
@@ -32,13 +44,16 @@ public class Arm {
         OUT_SLOW,
         IN_FAST,
         IN_SLOW,
+        OUT_UP,
         OUT,
         IN;
     }
 
     private enum HEIGHT_STATE{
         UP,
-        DOWN;
+        DOWN,
+        MID,
+        MAX;
     }
 
     //Constructor
@@ -51,12 +66,18 @@ public class Arm {
         heightServo1 = hwm.get(Servo.class, "heightServo1");
         heightServo2 = hwm.get(Servo.class, "heightServo2");
         vibrator = hwm.get(Servo.class, "vibrator");
-        //Reverse Motors
+
+        armSensor = hwm.get(DistanceSensor.class, "armSensor");
+        //gondolaSensor = hwm.get(DistanceSensor.class, "gondolaSensor");
 
         //Init Servos
         heightServo1.setPosition(ARM_DOWN);
         heightServo2.setPosition(ARM_DOWN);
         vibrator.setPosition(VIBRATOR_CLOSED);
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public static void moveArm(double newHeight){
@@ -74,6 +95,16 @@ public class Arm {
         heightServo2.setPosition(ARM_DOWN);
     }
 
+    public static void armMid(){
+        heightServo1.setPosition(ARM_MID);
+        heightServo2.setPosition(ARM_MID);
+    }
+
+    public static void armMax(){
+        heightServo1.setPosition(ARM_MAX);
+        heightServo2.setPosition(ARM_MAX);
+    }
+
     public static void releaseFreight() throws InterruptedException {
         vibrator.setPosition(VIBRATOR_OPEN);
         Thread.sleep(200);
@@ -88,42 +119,49 @@ public class Arm {
         arm.setPower(0);
     }
 
+    public static void armOutUp(){
+        armUp();
+        arm.setTargetPosition(1000);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(ARM_FAST);
+        currentArmState = ARM_STATE.OUT;
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     public static ARM_STATE getArmState(){
         return currentArmState;
     }
 
-    //Changes the state of the intake based on the input
-    public static void heightChangeState(){
-        if(currentHeightState == HEIGHT_STATE.DOWN){
+    public static boolean armIsIn(){
+        if(currentArmState == ARM_STATE.IN)
+            return true;
+        else
+            return false;
+    }
+
+    public static void changeSpeed(String newSpeed){
+        speed = newSpeed;
+    }
+
+    public static String getSpeed(){
+        return speed;
+    }
+
+    //Changes the state of the height servos based on the input
+    public static void heightChangeState(String pos){
+        if(pos.equals("UP")){
             currentHeightState = HEIGHT_STATE.UP;
         }
-        else if(currentHeightState == HEIGHT_STATE.UP){
+        else if(pos.equals("DOWN")){
             currentHeightState = HEIGHT_STATE.DOWN;
         }
-    }
-
-    public static void armChangeState(String speed){
-        if(currentArmState == ARM_STATE.IN && speed.equals("SLOW")){
-            currentArmState = ARM_STATE.OUT_SLOW;
+        else if(pos.equals("MID")){
+            currentHeightState = HEIGHT_STATE.MID;
         }
-        else if(currentArmState == ARM_STATE.IN && speed.equals("FAST")){
-            currentArmState = ARM_STATE.OUT_FAST;
-        }
-        else if(currentArmState == ARM_STATE.OUT && speed.equals("SLOW")){
-            currentArmState = ARM_STATE.IN_SLOW;
-        }
-        else if(currentArmState == ARM_STATE.OUT && speed.equals("FAST")){
-            currentArmState = ARM_STATE.IN_FAST;
-        }
-        else if(currentArmState == ARM_STATE.OUT_SLOW || currentArmState == ARM_STATE.OUT_FAST){
-            currentArmState = ARM_STATE.OUT;
-        }
-        else if(currentArmState == ARM_STATE.IN_SLOW || currentArmState == ARM_STATE.IN_FAST){
-            currentArmState = ARM_STATE.IN;
+        else if(pos.equals("MAX")){
+            currentHeightState = HEIGHT_STATE.MAX;
         }
     }
 
-    //Updates the powers for the intake based on the states above
     public static void heightUpdatePosition() {
         if(currentHeightState == HEIGHT_STATE.DOWN){
             armDown();
@@ -131,26 +169,66 @@ public class Arm {
         else if (currentHeightState == HEIGHT_STATE.UP){
             armUp();
         }
+        else if (currentHeightState == HEIGHT_STATE.MID){
+            armMid();
+        }
+        else if (currentHeightState == HEIGHT_STATE.MAX){
+            armMax();
+        }
+    }
+
+    public static void armChangeState(String dir){
+        if(speed.equals("FAST") && dir.equals("OUT")){
+            currentArmState = ARM_STATE.OUT_FAST;
+        }
+        else if(speed.equals("SLOW") && dir.equals("OUT")){
+            currentArmState = ARM_STATE.OUT_SLOW;
+        }
+        else if(speed.equals("FAST") && dir.equals("IN")){
+            currentArmState = ARM_STATE.IN_FAST;
+        }
+        else if(speed.equals("SLOW") && dir.equals("IN")){
+            currentArmState = ARM_STATE.IN_SLOW;
+        }
+        else if(currentArmState == ARM_STATE.OUT_SLOW || currentArmState == ARM_STATE.OUT_FAST){
+            currentArmState = ARM_STATE.OUT;
+        }
+        else if(currentArmState == ARM_STATE.IN_SLOW || currentArmState == ARM_STATE.IN_FAST){
+            if(arm.getCurrentPosition() < 100){
+                stopArm();
+                currentArmState = ARM_STATE.IN;
+            }
+            else{
+                currentArmState = ARM_STATE.OUT;
+            }
+        }
+        /* if(currentArmState == ARM_STATE.IN){
+            currentArmState = ARM_STATE.OUT_UP;
+        }*/
     }
 
     public static void armUpdatePosition(){
         if(currentArmState == ARM_STATE.IN){
+            //arm.setPower(-.2);
             stopArm();
         }
         else if(currentArmState == ARM_STATE.OUT){
             stopArm();
         }
         else if(currentArmState == ARM_STATE.OUT_SLOW){
-            slideArm(.2);
+            slideArm(-.2);
         }
         else if(currentArmState == ARM_STATE.OUT_FAST){
-            slideArm(-.6);
+            slideArm(.6);
         }
         else if(currentArmState == ARM_STATE.IN_SLOW){
             slideArm(-.2);
         }
         else if(currentArmState == ARM_STATE.IN_FAST){
-            slideArm(.6);
+            slideArm(-.6);
         }
+        /*else if(currentArmState == ARM_STATE.OUT_UP){
+            armOutUp();
+        }*/
     }
 }

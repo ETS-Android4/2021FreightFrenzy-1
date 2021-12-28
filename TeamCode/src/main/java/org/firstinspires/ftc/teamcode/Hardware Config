@@ -15,3 +15,19 @@ Height Servo 2 - Rev hub, Port 1
 Vibrator - Control hub, Port 2
 
 Tower Sensor - Expansion hub, Port 0
+
+/ top dpad - top position for dropping on hub
+/ right dpad is a middle position for middle hub
+/ down dpad is bottom / horixontal pos
+/ left dpad is very top position for dropping team element
+
+/ y - out to top position - 1000 encoder counts
+a -  bringing in method - go down and goes to 400 encoder counts until flat, then goes in
+
+/ right bumper - fast mode
+/ left bumper slow mode
+/ right trigger - arm out
+/ left trigger - arm in
+
+/ condition for onl intake when arm is in
+/ intake only spins when holding

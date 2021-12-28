@@ -62,7 +62,11 @@ public class Carousel {
     }
 
     public static void brake() throws InterruptedException{
-        carouselMotor.setPower(-1);
+        if(color.equals("RED")){
+            carouselMotor.setPower(-1);
+        } else if (color.equals("BLUE")){
+            carouselMotor.setPower(1);
+        }
         Thread.sleep(50);
         carouselMotor.setPower(0);
     }
