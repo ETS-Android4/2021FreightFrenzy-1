@@ -55,6 +55,14 @@ public class Intake {
         intakeBack.setPower(0);
     }
 
+    public static void changeIntakeBackwards(){
+        currentState = INTAKE_STATE.BACKWARDS;
+    }
+
+    public static void changeIntakeOff(){
+        currentState = INTAKE_STATE.OFF;
+    }
+
     //Changes the state of the intake based on the input
     public static void intakeChangeState(String direction){
         if(currentState == INTAKE_STATE.OFF && direction.equals("FORWARD") && Arm.armIsIn()){

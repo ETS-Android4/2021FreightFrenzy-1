@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -35,6 +38,9 @@ public class DriveTrain {
     //Sensors
     public static ColorSensor floorColorSensor;
 
+    //LEDS
+    public static RevBlinkinLedDriver blinkinLedDriver;
+
     //Turning
     private static double driveTrainError = 0;
     private static double driveTrainPower = 0;
@@ -53,6 +59,8 @@ public class DriveTrain {
         imu = hwm.get(BNO055IMU.class, "imu");
 
         floorColorSensor = hwm.get(ColorSensor.class, "floorColorSensor");
+
+        blinkinLedDriver = hwm.get(RevBlinkinLedDriver.class, "blinkin");
 
         //Reverse Motors
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -85,6 +93,8 @@ public class DriveTrain {
         imu.initialize(parameters1);
 
         angles = DriveTrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);//AQUA
     }
 
     public static void cartesianDrive(double x, double y, double z){
@@ -204,6 +214,44 @@ public class DriveTrain {
         DriveTrain.leftBack.setPower(0);
     }
 
+    public static void gyroTurnIntake(double finalAngle, int timer, double eV){
+        int turnTimer = timer;
+        double currentDistance;
+        double exitValue;
+
+        currentDistance = Double.MAX_VALUE;
+        exitValue = Double.MIN_VALUE;
+
+        while (Math.abs(DriveTrain.angles.firstAngle - (finalAngle)) > (Math.PI / 60) && turnTimer > 0 && currentDistance > exitValue){
+            exitValue = eV;
+            driveTrainError = angles.firstAngle - finalAngle;
+            if(Math.abs(driveTrainError) > (Math.PI / 6)){
+                driveTrainPower = 0.5;
+            }
+            else{
+                if(Math.abs(driveTrainError) < (Math.PI / 60)){//60
+                    driveTrainPower = 0;
+                }
+                else if(Math.abs(driveTrainError) > (Math.PI / 60)) {//60
+                    driveTrainPower = Math.abs(driveTrainError / (Math.PI / 2)) + 0.1;
+                }
+            }
+            driveTrainError = angles.firstAngle - finalAngle;
+            if(driveTrainError > 0){
+                cartesianDrive(0, 0, driveTrainPower);
+            }
+            else if(driveTrainError < 0){
+                cartesianDrive(0, 0, -driveTrainPower);
+            }
+            currentDistance = Arm.armSensor.getDistance(DistanceUnit.CM);
+            turnTimer--;
+        }
+        DriveTrain.rightFront.setPower(0);
+        DriveTrain.rightBack.setPower(0);
+        DriveTrain.leftFront.setPower(0);
+        DriveTrain.leftBack.setPower(0);
+    }
+
     public static void driveToLine(double power, String color, Telemetry telemetry) throws InterruptedException {
         double minBlue = Double.MAX_VALUE;
         double maxBlue = Double.MIN_VALUE;
@@ -245,7 +293,7 @@ public class DriveTrain {
             rightBack.setPower(0);
         }
         else if(color.equals("WHITE")) {
-            while(floorColorSensor.alpha() < 120){//480, 680
+            while(floorColorSensor.alpha() < 90){//480, 680
                 if(DriveTrain.floorColorSensor.alpha() > maxWhite){
                     maxWhite = DriveTrain.floorColorSensor.alpha();
                 }
@@ -298,6 +346,84 @@ public class DriveTrain {
         rightFront.setPower(0);
         rightBack.setPower(0);
     }
+
+    public static void cartesianDriveIntake(double x, double y, int eV, int timer, Telemetry telemetry) {
+        y = -y;
+        double speed = Math.sqrt(2) * Math.hypot(x, y);
+        double command = Math.atan2(y, -x) + Math.PI/2;
+        double rotation = 0;
+        double startingHeading = angles.firstAngle;
+        double currentError = 0;
+        double adjustedXHeading = 0;
+        double adjustedYHeading = 0;
+
+        double currentDistance;
+        double exitValue;
+        int timerLength = timer;
+
+        currentDistance = Double.MAX_VALUE;
+        exitValue = Double.MIN_VALUE;
+
+        while (currentDistance > exitValue && timerLength >= 0) {
+            exitValue = eV;
+
+            angles = DriveTrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+            adjustedXHeading = Math.cos(command + angles.firstAngle + Math.PI / 4);
+            adjustedYHeading = Math.sin(command + angles.firstAngle + Math.PI / 4);
+
+            currentError = angles.firstAngle - startingHeading;
+
+            if (Math.abs(currentError) > (Math.PI / 12)) {
+                rotation = 0.40;
+            } else {
+                if (Math.abs(currentError) > (Math.PI / 180)) {
+                    rotation = Math.abs(currentError / 0.6);
+                } else {
+                    rotation = 0;
+                }
+            }
+
+            if (currentError < 0) {
+                rotation = rotation * -1;
+            }
+
+            leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER);
+            rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER);
+            leftBack.setPower((speed * adjustedXHeading + rotation) * Constants.TELEOP_LIMITER);
+            rightBack.setPower((speed * adjustedYHeading - rotation) * Constants.TELEOP_LIMITER);
+
+            currentDistance = Arm.armSensor.getDistance(DistanceUnit.CM);//leftDistanceSensor
+
+            telemetry.addData("Distance: ", Arm.armSensor.getDistance(DistanceUnit.CM));
+            telemetry.update();
+
+            timerLength--;
+        }
+
+        if(currentDistance < exitValue)
+            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);//AQUA
+
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
+    }
+
+    public static void customDrive(double lf, double lb, double rf, double rb, int timer){
+        while(timer >= 0){
+            leftFront.setPower(lf * Constants.TELEOP_LIMITER);
+            leftBack.setPower(lb * Constants.TELEOP_LIMITER);
+            rightFront.setPower(rf * Constants.TELEOP_LIMITER);
+            rightBack.setPower(rb * Constants.TELEOP_LIMITER);
+            timer--;
+        }
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
+    }
+
 
     public static void setRunMode(String input) {
         if (input.equals("STOP_AND_RESET_ENCODER")) {

@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 public class Arm {
     //Motors
     public static DcMotor arm;
@@ -18,7 +20,7 @@ public class Arm {
 
     //Sensors
     public static DistanceSensor armSensor;
-    //public static DistanceSensor gondolaSensor;
+    public static DistanceSensor gondolaSensor;
 
     //Constants for flicker servo
     private static final double VIBRATOR_CLOSED = 0.14;
@@ -68,7 +70,7 @@ public class Arm {
         vibrator = hwm.get(Servo.class, "vibrator");
 
         armSensor = hwm.get(DistanceSensor.class, "armSensor");
-        //gondolaSensor = hwm.get(DistanceSensor.class, "gondolaSensor");
+        gondolaSensor = hwm.get(DistanceSensor.class, "gondolaSensor");
 
         //Init Servos
         heightServo1.setPosition(ARM_DOWN);
@@ -120,13 +122,53 @@ public class Arm {
     }
 
     public static void armOutUp(){
-        armUp();
-        arm.setTargetPosition(1000);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(ARM_FAST);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while(arm.getCurrentPosition() < 1000){
+            arm.setTargetPosition(1000);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(ARM_FAST);
+        }
+        arm.setPower(0);
         currentArmState = ARM_STATE.OUT;
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
+    public static void armOutMid(){
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while(arm.getCurrentPosition() < 950){
+            arm.setTargetPosition(950);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(ARM_FAST);
+        }
+        arm.setPower(0);
+        currentArmState = ARM_STATE.OUT;
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public static void armOutDown(){
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while(arm.getCurrentPosition() < 900){
+            arm.setTargetPosition(900);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(ARM_FAST);
+        }
+        arm.setPower(0);
+        currentArmState = ARM_STATE.OUT;
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public static void armIn(){
+        while(arm.getCurrentPosition() > 0){
+            arm.setTargetPosition(0);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(-ARM_FAST);
+        }
+        arm.setPower(0);
+        currentArmState = ARM_STATE.IN;
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     public static ARM_STATE getArmState(){
         return currentArmState;
     }
@@ -144,6 +186,10 @@ public class Arm {
 
     public static String getSpeed(){
         return speed;
+    }
+
+    public static double getArmSensorLength(){
+        return armSensor.getDistance(DistanceUnit.CM);
     }
 
     //Changes the state of the height servos based on the input

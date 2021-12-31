@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -22,6 +23,7 @@ public class MainTeleOp extends LinearOpMode{
     private boolean heightFlag = false;
     private boolean manualHeight = false;
     private boolean manualHeightFlag = false;
+    private boolean ballInGondola = false;
 
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
@@ -40,14 +42,27 @@ public class MainTeleOp extends LinearOpMode{
             }
 
 
+            if(Arm.getArmSensorLength() < 12 && !ballInGondola){
+                Intake.changeIntakeBackwards();
+                ballInGondola = true;
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
+
+            if(ballInGondola){
+                Intake.changeIntakeBackwards();
+            }
+
+            if(!ballInGondola && (Intake.intakeFrontSensor.red() > 1650 || Intake.intakeBackSensor.red() > 1650)){
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
+            }
 
             //Intake forward
-            if (gamepad2.x && !intakeFlagFoward) {
+            if (gamepad2.x && !intakeFlagFoward && !ballInGondola) {
                 intakeFlagFoward = true;
                 Intake.intakeChangeState("FORWARD");
             }
             //Intake backwards
-            else if (gamepad2.b && !intakeFlagReverse){
+            else if (gamepad2.b && !intakeFlagReverse && !ballInGondola){
                 intakeFlagReverse = true;
                 Intake.intakeChangeState("REVERSE");
             }
@@ -155,6 +170,9 @@ public class MainTeleOp extends LinearOpMode{
 
             if(gamepad2.dpad_left) {
                 Arm.releaseFreight();
+                ballInGondola = false;
+                Intake.changeIntakeOff();
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
             }
 
             if(gamepad2.right_stick_y < -.2 && !manualHeightFlag){
@@ -173,6 +191,13 @@ public class MainTeleOp extends LinearOpMode{
 
             if(gamepad2.right_stick_y <= .2 && gamepad2.right_stick_y >= -.2){
                 manualHeightFlag = false;
+            }
+
+            if(gamepad1.dpad_left){
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            }
+            else if(gamepad1.dpad_right){
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
             }
 
 
@@ -214,6 +239,7 @@ public class MainTeleOp extends LinearOpMode{
                     .addData("Blue", "%.3f", (double) Intake.intakeBackSensor.blue())
                     .addData("Alpha", "%.3f", (double) Intake.intakeBackSensor.alpha());
             telemetry.addData("Distance to gondola: ", Arm.armSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("Distance to hub: ", Arm.gondolaSensor.getDistance(DistanceUnit.CM));
 
             DriveTrain.gyroTele(telemetry);
 
