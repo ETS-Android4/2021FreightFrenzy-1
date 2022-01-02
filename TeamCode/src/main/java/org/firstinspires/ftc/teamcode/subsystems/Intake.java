@@ -35,6 +35,10 @@ public class Intake {
 
         intakeFrontSensor = hwm.get(ColorSensor.class, "intakeFrontSensor");
         intakeBackSensor = hwm.get(ColorSensor.class, "intakeBackSensor");
+
+        intakeFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     //Intake forwards

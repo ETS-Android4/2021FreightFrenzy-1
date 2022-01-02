@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Auto;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -24,12 +25,15 @@ public class MainTeleOp extends LinearOpMode{
     private boolean manualHeight = false;
     private boolean manualHeightFlag = false;
     private boolean ballInGondola = false;
+    private boolean autoVibrate = false;
+    private boolean vibrated = false;
 
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
         Carousel.initCarousel(hardwareMap);
         Arm.initArm(hardwareMap);
         Intake.initIntake(hardwareMap);
+        Auto.initAuto(hardwareMap);
 
         waitForStart();
 
@@ -41,8 +45,20 @@ public class MainTeleOp extends LinearOpMode{
                 DriveTrain.resetGyro();
             }
 
+            /*if(Arm.arm.getCurrentPosition() > 500 && Arm.gondolaSensor.getDistance(DistanceUnit.CM) < 35 && !vibrated){
+                Arm.releaseFreight();
+                ballInGondola = false;
+                Intake.changeIntakeOff();
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                Arm.stopArm();
+                autoVibrate = true;
+                vibrated = true;
+            }*/
 
-            if(Arm.getArmSensorLength() < 12 && !ballInGondola){
+            if(Arm.armIsIn())
+                vibrated = false;
+
+            if(Arm.getArmSensorLength() < 10 && !ballInGondola){
                 Intake.changeIntakeBackwards();
                 ballInGondola = true;
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -108,12 +124,12 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             //Extend/retract arm fast
-            if (gamepad2.right_trigger > .2 && !armFlagFast) {
+            if (gamepad2.right_trigger > .2 && !armFlagFast && !autoVibrate) {
                 armFlagFast = true;
                 Arm.armChangeState("OUT");
             }
             //Extend/retract arm fast
-            else if (gamepad2.left_trigger > .2 && !armFlagSlow){
+            else if (gamepad2.left_trigger > .2 && !armFlagSlow && !autoVibrate){
                 armFlagSlow = true;
                 Arm.armChangeState("IN");
             }
@@ -126,6 +142,10 @@ public class MainTeleOp extends LinearOpMode{
             if(armFlagSlow && gamepad2.left_trigger <= .2){
                 armFlagSlow = false;
                 Arm.armChangeState("N/A");
+            }
+
+            if(gamepad2.left_trigger <= .2 && gamepad2.right_trigger <= .2){
+                autoVibrate = false;
             }
 
             //Arm Out Up
@@ -240,6 +260,7 @@ public class MainTeleOp extends LinearOpMode{
                     .addData("Alpha", "%.3f", (double) Intake.intakeBackSensor.alpha());
             telemetry.addData("Distance to gondola: ", Arm.armSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("Distance to hub: ", Arm.gondolaSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("Dead Wheel pos: ", Auto.getYPositon());
 
             DriveTrain.gyroTele(telemetry);
 

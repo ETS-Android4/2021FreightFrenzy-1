@@ -32,7 +32,9 @@ public class Carousel {
         carouselMotor = hwm.get(DcMotor.class, "carouselMotor");
 
         //Reverse Motors
-        carouselMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //carouselMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public static void accelerate(double yValue) {

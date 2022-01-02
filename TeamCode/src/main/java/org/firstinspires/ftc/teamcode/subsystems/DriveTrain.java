@@ -83,6 +83,7 @@ public class DriveTrain {
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+
         BNO055IMU.Parameters parameters1 = new BNO055IMU.Parameters();
         parameters1.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters1.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -252,47 +253,10 @@ public class DriveTrain {
         DriveTrain.leftBack.setPower(0);
     }
 
-    public static void driveToLine(double power, String color, Telemetry telemetry) throws InterruptedException {
-        double minBlue = Double.MAX_VALUE;
-        double maxBlue = Double.MIN_VALUE;
-
+    public static void driveToLineBlue(double power, String color, Telemetry telemetry) throws InterruptedException {
         double minWhite = Double.MAX_VALUE;
         double maxWhite = Double.MIN_VALUE;
-        if(color.equals("RED")){
-            while(floorColorSensor.red() < 1350){ //1600
-                leftFront.setPower(power);
-                rightFront.setPower(power);
-                leftBack.setPower(power);
-                rightBack.setPower(power);
-            }
-            leftFront.setPower(0);
-            rightFront.setPower(0);
-            leftBack.setPower(0);
-            rightBack.setPower(0);
-        }
-        else if(color.equals("BLUE")){
-            while(floorColorSensor.blue() < 1600){//2100
-                if(DriveTrain.floorColorSensor.blue() > maxBlue){
-                    maxBlue = DriveTrain.floorColorSensor.blue();
-                }
-
-                if (DriveTrain.floorColorSensor.blue() < minBlue){
-                    minBlue = DriveTrain.floorColorSensor.blue();
-                }
-                telemetry.addData("Max Blue: ", maxBlue);
-                telemetry.addData("Min Blue: ", minBlue);
-                telemetry.update();
-                leftFront.setPower(power);
-                rightFront.setPower(power);
-                leftBack.setPower(power);
-                rightBack.setPower(power);
-            }
-            leftFront.setPower(0);
-            rightFront.setPower(0);
-            leftBack.setPower(0);
-            rightBack.setPower(0);
-        }
-        else if(color.equals("WHITE")) {
+        if(color.equals("WHITE")) {
             while(floorColorSensor.alpha() < 90){//480, 680
                 if(DriveTrain.floorColorSensor.alpha() > maxWhite){
                     maxWhite = DriveTrain.floorColorSensor.alpha();
@@ -302,9 +266,9 @@ public class DriveTrain {
                     minWhite = DriveTrain.floorColorSensor.alpha();
                 }
                 leftFront.setPower(power);
-                rightFront.setPower(power);
+                rightFront.setPower(power + (power * .15));
                 leftBack.setPower(power);
-                rightBack.setPower(power);
+                rightBack.setPower(power + (power * .15));
 //                Intake.releaseAll();
                 telemetry.addData("Max White: ", maxWhite);
                 telemetry.addData("Min White: ", minWhite);
@@ -332,7 +296,7 @@ public class DriveTrain {
 
     public static void autoBrake(int timer){
         double currentPower = leftFront.getPower();
-        double power = -currentPower * 2;
+        double power = -currentPower * 100;
 
         while(timer > 0) {
             leftFront.setPower(power);
