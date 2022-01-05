@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -7,6 +8,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Constants;
 
 public class Auto {
     public static DcMotor deadWheel;
@@ -49,9 +55,9 @@ public class Auto {
 
             double robotMovementYComponent = calculateY(0, power);
 
-            /*if(Math.abs(distance - previousDistance) < 15){
-                yMultiplier += 0.04;
-            }*/
+            if(distance/initialDistance < .25){
+                yMultiplier += 0.1;
+            }
 
             DriveTrain.leftFront.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
             DriveTrain.rightFront.setPower(robotMovementYComponent * (distance/initialDistance) * yMultiplier);// + feedForward
@@ -130,5 +136,78 @@ public class Auto {
     public static void resetEncoder(){
         deadWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         deadWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public static void driveIntakeColor(double x, double y, int timer, Telemetry telemetry) {
+        y = -y;
+        double speed = Math.sqrt(2) * Math.hypot(x, y);
+        double command = Math.atan2(y, -x) + Math.PI/2;
+        double rotation = 0;
+        double startingHeading = DriveTrain.angles.firstAngle;
+        double currentError = 0;
+        double adjustedXHeading = 0;
+        double adjustedYHeading = 0;
+
+        double currentColor;
+        double exitValue;
+        double currentDistance;
+        double exitValueDistance;
+        int timerLength = timer;
+
+        currentColor = Double.MIN_VALUE;
+        exitValue = Double.MAX_VALUE;
+
+        currentDistance = Double.MAX_VALUE;
+        exitValueDistance = Double.MIN_VALUE;
+
+
+        while ((currentColor < exitValue && currentDistance > exitValueDistance) && timerLength >= 0) {
+            exitValue = 1650;
+            exitValueDistance = 10;
+
+            DriveTrain.angles = DriveTrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+            adjustedXHeading = Math.cos(command + DriveTrain.angles.firstAngle + Math.PI / 4);
+            adjustedYHeading = Math.sin(command + DriveTrain.angles.firstAngle + Math.PI / 4);
+
+            currentError = DriveTrain.angles.firstAngle - startingHeading;
+
+            if (Math.abs(currentError) > (Math.PI / 12)) {
+                rotation = 0.40;
+            } else {
+                if (Math.abs(currentError) > (Math.PI / 180)) {
+                    rotation = Math.abs(currentError / 0.6);
+                } else {
+                    rotation = 0;
+                }
+            }
+
+            if (currentError < 0) {
+                rotation = rotation * -1;
+            }
+
+            DriveTrain.leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER);
+            DriveTrain.rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER);
+            DriveTrain.leftBack.setPower((speed * adjustedXHeading + rotation) * Constants.TELEOP_LIMITER);
+            DriveTrain.rightBack.setPower((speed * adjustedYHeading - rotation) * Constants.TELEOP_LIMITER);
+
+            currentColor = Intake.intakeFrontSensor.red();//leftDistanceSensor
+            currentDistance = Arm.getArmSensorLength();
+
+            telemetry.addData("Distance: ", Arm.armSensor.getDistance(DistanceUnit.CM));
+            telemetry.update();
+
+            timerLength--;
+        }
+
+        if(currentColor > exitValue)
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);//AQUA
+        if(currentDistance < exitValueDistance)
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);//AQUA
+
+        DriveTrain.leftFront.setPower(0);
+        DriveTrain.leftBack.setPower(0);
+        DriveTrain.rightFront.setPower(0);
+        DriveTrain.rightBack.setPower(0);
     }
 }

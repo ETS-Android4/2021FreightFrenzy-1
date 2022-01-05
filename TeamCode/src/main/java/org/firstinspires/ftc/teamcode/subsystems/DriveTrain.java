@@ -257,7 +257,7 @@ public class DriveTrain {
         double minWhite = Double.MAX_VALUE;
         double maxWhite = Double.MIN_VALUE;
         if(color.equals("WHITE")) {
-            while(floorColorSensor.alpha() < 90){//480, 680
+            while(floorColorSensor.alpha() < 75){//480, 680
                 if(DriveTrain.floorColorSensor.alpha() > maxWhite){
                     maxWhite = DriveTrain.floorColorSensor.alpha();
                 }

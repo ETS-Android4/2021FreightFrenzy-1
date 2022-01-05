@@ -94,7 +94,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Auto.goToPosition(-12 * Constants.COUNTS_PER_INCH, -.2, 250, telemetry, opModeIsActive());
 
-            Auto.autoBrake(50);
+            Auto.autoBrake(25);
 
             sleep(100);
 
@@ -108,15 +108,33 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armIn();
 
+            //finishes preloaded block, begin first cycle
+
             DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             Intake.intake();
 
-            DriveTrain.cartesianDriveTimer(0, .25, 20);
+            DriveTrain.cartesianDriveTimer(0, .25, 15);
 
-            DriveTrain.cartesianDriveIntake(0, .15, 10, 35, telemetry);
+            Auto.driveIntakeColor(0, .12, 35, telemetry);
 
             sleep(50);
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                int timerLength = 35;
+                while(timerLength > 0 && Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                    timerLength--;
+                }
+            }
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                Auto.driveIntakeColor(0, .12, 35, telemetry);
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
+
+            DriveTrain.cartesianDriveTimer(0, -.25, 10);
 
             if(Arm.getArmSensorLength() > 10){
                 int timerLength = 35;
@@ -125,18 +143,9 @@ public class TensorFlowAuto extends LinearOpMode {
                 }
             }
 
-            if(Arm.getArmSensorLength() > 10){
-                DriveTrain.cartesianDriveIntake(0, .15, 10, 35, telemetry);
-            }
-            else{
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-            }
-
             Intake.setBackwards();
 
-            DriveTrain.cartesianDriveTimer(.4, -.2, 25);
-
-            Intake.stop();
+            DriveTrain.cartesianDriveTimer(.4, -.1, 25);
 
             Arm.armMid();
 
@@ -145,6 +154,74 @@ public class TensorFlowAuto extends LinearOpMode {
             //DriveTrain.cartesianDriveTimer(.4, 0, 13);
 
             Auto.resetEncoder();
+
+            Intake.stop();
+
+            Auto.goToPosition(-35 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+            sleep(100);
+
+            Auto.autoBrake(25);
+
+            Arm.armOutMid();
+
+            sleep(100);
+
+            Arm.releaseFreight();
+
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+
+            sleep(100);
+
+            Arm.armIn();
+
+            Arm.armDown();
+
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
+
+            Intake.intake();
+
+            DriveTrain.cartesianDriveTimer(0, .25, 20);
+
+            Auto.driveIntakeColor(0, .12, 35, telemetry);
+
+            sleep(50);
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                int timerLength = 35;
+                while(timerLength > 0 && Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                    timerLength--;
+                }
+            }
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                Auto.driveIntakeColor(0, .12, 35, telemetry);
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
+
+            DriveTrain.cartesianDriveTimer(0, -.25, 10);
+
+            if(Arm.getArmSensorLength() > 10){
+                int timerLength = 35;
+                while(timerLength > 0 && Arm.getArmSensorLength() > 10){
+                    timerLength--;
+                }
+            }
+
+            Intake.setBackwards();
+
+            DriveTrain.cartesianDriveTimer(.4, -.1, 25);
+
+            Arm.armMid();
+
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
+
+            //DriveTrain.cartesianDriveTimer(.4, 0, 13);
+
+            Auto.resetEncoder();
+
+            Intake.stop();
 
             Auto.goToPosition(-35 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
             sleep(100);
@@ -167,52 +244,9 @@ public class TensorFlowAuto extends LinearOpMode {
 
             DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
-            Intake.intake();
+            DriveTrain.cartesianDriveTimer(0, .25, 15);
 
-            DriveTrain.cartesianDriveTimer(0, .25, 20);
-
-            DriveTrain.cartesianDriveIntake(0, .15, 10, 35, telemetry);
-
-            sleep(50);
-
-            if(Arm.getArmSensorLength() > 10){
-                int timerLength = 35;
-                while(timerLength > 0 && Arm.getArmSensorLength() > 10){
-                    timerLength--;
-                }
-            }
-
-            if(Arm.getArmSensorLength() > 10){
-                DriveTrain.cartesianDriveIntake(0, .15, 10, 35, telemetry);
-            }
-            else{
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-            }
-
-            Intake.setBackwards();
-
-            DriveTrain.cartesianDriveTimer(.4, -.2, 25);
-
-            Intake.stop();
-
-            Arm.armMid();
-
-            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
-
-            //DriveTrain.cartesianDriveTimer(.4, 0, 13);
-
-            Auto.resetEncoder();
-
-            Auto.goToPosition(-35 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
-            sleep(100);
-
-            Auto.autoBrake(50);
-
-            Arm.armOutMid();
-
-            sleep(100);
-
-            Arm.releaseFreight();
+            DriveTrain.cartesianDriveTimer(-.4, 0, 60);
         }
         else if(label.equals("MIDDLE")){
             Arm.armMid();
@@ -227,21 +261,37 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.releaseFreight();
 
-            sleep(500);
+            Arm.armDown();
 
             Arm.armIn();
 
-            Arm.armDown();
+            //finishes preloaded block, begin first cycle
 
-            DriveTrain.driveToLineBlue(.22, "WHITE", telemetry);
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             Intake.intake();
 
-            DriveTrain.cartesianDriveTimer(0, 0.3, 20);
+            DriveTrain.cartesianDriveTimer(0, .25, 15);
 
-            DriveTrain.cartesianDriveIntake(0, .25, 10, 30, telemetry);
+            Auto.driveIntakeColor(0, .12, 35, telemetry);
 
             sleep(50);
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                int timerLength = 35;
+                while(timerLength > 0 && Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                    timerLength--;
+                }
+            }
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                Auto.driveIntakeColor(0, .12, 35, telemetry);
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
+
+            DriveTrain.cartesianDriveTimer(0, -.25, 10);
 
             if(Arm.getArmSensorLength() > 10){
                 int timerLength = 35;
@@ -250,25 +300,24 @@ public class TensorFlowAuto extends LinearOpMode {
                 }
             }
 
-            if(Arm.getArmSensorLength() > 10){
-                DriveTrain.cartesianDriveIntake(0, .25, 10, 30, telemetry);
-            }
-            else{
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);//AQUA
-            }
-
             Intake.setBackwards();
 
-            DriveTrain.cartesianDriveTimer(.4, -.2, 25);
-
-            Intake.stop();
+            DriveTrain.cartesianDriveTimer(.4, -.1, 25);
 
             Arm.armMid();
 
-            DriveTrain.driveToLineBlue(-.22, "WHITE", telemetry);
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
 
-            DriveTrain.cartesianDriveTimer(0, -.325, 30);
+            //DriveTrain.cartesianDriveTimer(.4, 0, 13);
+
+            Auto.resetEncoder();
+
+            Intake.stop();
+
+            Auto.goToPosition(-35 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
             sleep(100);
+
+            Auto.autoBrake(25);
 
             Arm.armOutMid();
 
@@ -276,7 +325,85 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.releaseFreight();
 
-            sleep(500);
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+
+            sleep(100);
+
+            Arm.armIn();
+
+            Arm.armDown();
+
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
+
+            Intake.intake();
+
+            DriveTrain.cartesianDriveTimer(0, .25, 20);
+
+            Auto.driveIntakeColor(0, .12, 35, telemetry);
+
+            sleep(50);
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                int timerLength = 35;
+                while(timerLength > 0 && Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                    timerLength--;
+                }
+            }
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                Auto.driveIntakeColor(0, .12, 35, telemetry);
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
+
+            DriveTrain.cartesianDriveTimer(0, -.25, 10);
+
+            if(Arm.getArmSensorLength() > 10){
+                int timerLength = 35;
+                while(timerLength > 0 && Arm.getArmSensorLength() > 10){
+                    timerLength--;
+                }
+            }
+
+            Intake.setBackwards();
+
+            DriveTrain.cartesianDriveTimer(.4, -.1, 25);
+
+            Arm.armMid();
+
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
+
+            //DriveTrain.cartesianDriveTimer(.4, 0, 13);
+
+            Auto.resetEncoder();
+
+            Intake.stop();
+
+            Auto.goToPosition(-35 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+            sleep(100);
+
+            Auto.autoBrake(50);
+
+            Arm.armOutMid();
+
+            sleep(100);
+
+            Arm.releaseFreight();
+
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+
+            sleep(100);
+
+            Arm.armIn();
+
+            Arm.armDown();
+
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
+
+            DriveTrain.cartesianDriveTimer(0, .25, 15);
+
+            DriveTrain.cartesianDriveTimer(-.4, 0, 60);
         }
         else if(label.equals("RIGHT")){
             Arm.armUp();
@@ -293,19 +420,37 @@ public class TensorFlowAuto extends LinearOpMode {
 
             sleep(500);
 
-            Arm.armIn();
-
             Arm.armDown();
 
-            DriveTrain.driveToLineBlue(.22, "WHITE", telemetry);
+            Arm.armIn();
+
+            //finishes preloaded block, begin first cycle
+
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             Intake.intake();
 
-            DriveTrain.cartesianDriveTimer(0, 0.3, 20);
+            DriveTrain.cartesianDriveTimer(0, .25, 15);
 
-            DriveTrain.cartesianDriveIntake(0, .25, 10, 30, telemetry);
+            Auto.driveIntakeColor(0, .12, 35, telemetry);
 
             sleep(50);
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                int timerLength = 35;
+                while(timerLength > 0 && Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                    timerLength--;
+                }
+            }
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                Auto.driveIntakeColor(0, .12, 35, telemetry);
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
+
+            DriveTrain.cartesianDriveTimer(0, -.25, 10);
 
             if(Arm.getArmSensorLength() > 10){
                 int timerLength = 35;
@@ -314,25 +459,24 @@ public class TensorFlowAuto extends LinearOpMode {
                 }
             }
 
-            if(Arm.getArmSensorLength() > 10){
-                DriveTrain.cartesianDriveIntake(0, .25, 10, 30, telemetry);
-            }
-            else{
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);//AQUA
-            }
-
             Intake.setBackwards();
 
-            DriveTrain.cartesianDriveTimer(.4, -.2, 25);
-
-            Intake.stop();
+            DriveTrain.cartesianDriveTimer(.4, -.1, 25);
 
             Arm.armMid();
 
-            DriveTrain.driveToLineBlue(-.22, "WHITE", telemetry);
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
 
-            DriveTrain.cartesianDriveTimer(0, -.325, 30);
+            //DriveTrain.cartesianDriveTimer(.4, 0, 13);
+
+            Auto.resetEncoder();
+
+            Intake.stop();
+
+            Auto.goToPosition(-35 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
             sleep(100);
+
+            Auto.autoBrake(25);
 
             Arm.armOutMid();
 
@@ -340,7 +484,85 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.releaseFreight();
 
-            sleep(500);
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+
+            sleep(100);
+
+            Arm.armDown();
+
+            Arm.armIn();
+
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
+
+            Intake.intake();
+
+            DriveTrain.cartesianDriveTimer(0, .25, 20);
+
+            Auto.driveIntakeColor(0, .12, 35, telemetry);
+
+            sleep(50);
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                int timerLength = 35;
+                while(timerLength > 0 && Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                    timerLength--;
+                }
+            }
+
+            if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+                Auto.driveIntakeColor(0, .12, 35, telemetry);
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
+
+            DriveTrain.cartesianDriveTimer(0, -.25, 10);
+
+            if(Arm.getArmSensorLength() > 10){
+                int timerLength = 35;
+                while(timerLength > 0 && Arm.getArmSensorLength() > 10){
+                    timerLength--;
+                }
+            }
+
+            Intake.setBackwards();
+
+            DriveTrain.cartesianDriveTimer(.4, -.1, 25);
+
+            Arm.armMid();
+
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
+
+            //DriveTrain.cartesianDriveTimer(.4, 0, 13);
+
+            Auto.resetEncoder();
+
+            Intake.stop();
+
+            Auto.goToPosition(-35 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+            sleep(100);
+
+            Auto.autoBrake(50);
+
+            Arm.armOutMid();
+
+            sleep(100);
+
+            Arm.releaseFreight();
+
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+
+            sleep(100);
+
+            Arm.armDown();
+
+            Arm.armIn();
+
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
+
+            DriveTrain.cartesianDriveTimer(0, .25, 15);
+
+            DriveTrain.cartesianDriveTimer(-.4, 0, 60);
         }
 
     }
