@@ -27,6 +27,7 @@ public class TensorFlowAuto extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
     public String label;
+    public boolean marker;
 
     private static List<Recognition> tfodRecogntions;
 
@@ -49,7 +50,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
         tfodRecogntions = tfod.getUpdatedRecognitions();
 
-        for (Recognition recognition : tfodRecogntions) {
+        /*for (Recognition recognition : tfodRecogntions) {
             if(recognition.getLeft() > 255){
                 label = "RIGHT";
             }
@@ -61,6 +62,27 @@ public class TensorFlowAuto extends LinearOpMode {
         if(tfodRecogntions.isEmpty()){
             label = "LEFT";
         }
+         */
+
+        for(Recognition recognition : tfodRecogntions) {
+            telemetry.addData("Label: ", recognition.getLabel());
+            if(recognition.getLabel().equals("Marker")) {
+                marker = true;
+            }else{
+                marker = false;
+            }
+            if(!marker) {
+                if (recognition.getLeft() < 135) {
+                    label = "Left";
+                } else if (recognition.getLeft() >= 135 && recognition.getLeft() <= 386) {
+                    label = "Middle";
+                } else if (recognition.getLeft() > 386) {
+                    label = "Right";
+                } else {
+                    label = "None";
+                }
+            }
+        }
 
         telemetry.addData("Element: ", label);
         telemetry.update();
@@ -70,17 +92,24 @@ public class TensorFlowAuto extends LinearOpMode {
 
             tfodRecogntions = tfod.getUpdatedRecognitions();
 
-            for (Recognition recognition : tfodRecogntions) {
-                if(recognition.getLeft() > 255){
-                    label = "RIGHT";
+            for(Recognition recognition : tfodRecogntions) {
+                telemetry.addData("Label: ", recognition.getLabel());
+                if(recognition.getLabel().equals("Marker")) {
+                    marker = true;
+                }else{
+                    marker = false;
                 }
-                else if(recognition.getLeft() <= 255){
-                    label = "MIDDLE";
+                if(!marker) {
+                    if (recognition.getLeft() < 135) {
+                        label = "LEFT";
+                    } else if (recognition.getLeft() >= 135 && recognition.getLeft() <= 386) {
+                        label = "MIDDLE";
+                    } else if (recognition.getLeft() > 386) {
+                        label = "RIGHT";
+                    } else {
+                        label = "None";
+                    }
                 }
-            }
-
-            if(tfodRecogntions.isEmpty()){
-                label = "LEFT";
             }
 
             telemetry.addData("Element: ", label);
@@ -92,11 +121,11 @@ public class TensorFlowAuto extends LinearOpMode {
         if(label == null || label.equals("LEFT")){
             Arm.armDown();
 
-            Auto.goToPosition(-12 * Constants.COUNTS_PER_INCH, -.2, 250, telemetry, opModeIsActive());
+            //Auto.goToPosition(-12 * Constants.COUNTS_PER_INCH, -.2, 250, telemetry, opModeIsActive());
 
-            Auto.autoBrake(25);
+            //Auto.autoBrake(25);
 
-            sleep(100);
+            //sleep(100);
 
             Arm.armOutDown();
 
@@ -251,9 +280,9 @@ public class TensorFlowAuto extends LinearOpMode {
         else if(label.equals("MIDDLE")){
             Arm.armMid();
 
-            DriveTrain.cartesianDriveTimer(0, -.4, 20);
+            //DriveTrain.cartesianDriveTimer(0, -.4, 20);
 
-            sleep(100);
+            //sleep(100);
 
             Arm.armOutMid();
 
@@ -408,9 +437,11 @@ public class TensorFlowAuto extends LinearOpMode {
         else if(label.equals("RIGHT")){
             Arm.armUp();
 
-            DriveTrain.cartesianDriveTimer(0, -.4, 20);
+            sleep(250);
 
-            sleep(100);
+            //DriveTrain.cartesianDriveTimer(0, -.4, 20);
+
+            //sleep(100);
 
             Arm.armOutUp();
 

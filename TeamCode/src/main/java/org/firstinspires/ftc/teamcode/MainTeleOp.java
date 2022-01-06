@@ -58,7 +58,7 @@ public class MainTeleOp extends LinearOpMode{
             if(Arm.armIsIn())
                 vibrated = false;
 
-            if(Arm.getArmSensorLength() < 10 && !ballInGondola){
+            if((Arm.getArmSensorLength() < 10 || Intake.intakeFrontSensor.red() > 1950) && !ballInGondola){
                 Intake.changeIntakeBackwards();
                 ballInGondola = true;
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
