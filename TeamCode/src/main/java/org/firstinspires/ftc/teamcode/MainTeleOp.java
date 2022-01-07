@@ -25,8 +25,10 @@ public class MainTeleOp extends LinearOpMode{
     private boolean manualHeight = false;
     private boolean manualHeightFlag = false;
     private boolean ballInGondola = false;
+    private boolean ballInIntake = false;
     private boolean autoVibrate = false;
     private boolean vibrated = false;
+    private int intakeTimer = 0;
 
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
@@ -58,17 +60,28 @@ public class MainTeleOp extends LinearOpMode{
             if(Arm.armIsIn())
                 vibrated = false;
 
-            if((Arm.getArmSensorLength() < 10 || Intake.intakeFrontSensor.red() > 1950) && !ballInGondola){
+            if((Arm.getArmSensorLength() < 10 || Intake.intakeFrontSensor.red() > 1950) && !ballInGondola && !ballInIntake){
+                ballInIntake = true;
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
+            }
+
+            if(ballInIntake){
+                intakeTimer++;
+            }
+
+            if(intakeTimer > 1 && Arm.getArmSensorLength() < 10){
                 Intake.changeIntakeBackwards();
                 ballInGondola = true;
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }else{
+                ballInIntake = false;
             }
 
             if(ballInGondola){
                 Intake.changeIntakeBackwards();
             }
 
-            if(!ballInGondola && (Intake.intakeFrontSensor.red() > 1650 || Intake.intakeBackSensor.red() > 1650)){
+            if(!ballInGondola && (Intake.intakeFrontSensor.red() > 1950 || Intake.intakeBackSensor.red() > 1650)){
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
             }
 
@@ -191,6 +204,8 @@ public class MainTeleOp extends LinearOpMode{
             if(gamepad2.dpad_left) {
                 Arm.releaseFreight();
                 ballInGondola = false;
+                ballInIntake = false;
+                intakeTimer = 0;
                 Intake.changeIntakeOff();
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
             }

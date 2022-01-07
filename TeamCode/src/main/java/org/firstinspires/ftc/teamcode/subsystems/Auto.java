@@ -37,6 +37,7 @@ public class Auto {
         double initialDistance = Math.abs(targetYPos - getYPositon());
         double yMultiplier = 1.08;
         double previousDistance = 0;
+        double rrMultipler = 1.08;
 
         telemetry.addData("Distance To Y", distance);
         telemetry.update();
@@ -60,11 +61,15 @@ public class Auto {
             }
 
             DriveTrain.leftFront.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
-            DriveTrain.rightFront.setPower(robotMovementYComponent * (distance/initialDistance) * yMultiplier);// + feedForward
+            DriveTrain.rightFront.setPower(robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler);// + feedForward
             DriveTrain.leftBack.setPower  (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
-            DriveTrain.rightBack.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
+            DriveTrain.rightBack.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
 
             previousDistance = distance;
+
+            telemetry.addData("Distance To Y", distance);
+            telemetry.addData("Left front power: ", DriveTrain.leftFront.getPower());
+            telemetry.update();
         }
 
         DriveTrain.leftFront.setPower(0);
@@ -209,5 +214,19 @@ public class Auto {
         DriveTrain.leftBack.setPower(0);
         DriveTrain.rightFront.setPower(0);
         DriveTrain.rightBack.setPower(0);
+    }
+
+    public static void powerMotors(double power){
+        DriveTrain.leftFront.setPower(power);
+        DriveTrain.leftBack.setPower(power);
+        DriveTrain.rightFront.setPower(power);
+        DriveTrain.rightBack.setPower(power);
+    }
+
+    public static void powerMotorsIndiv(double lf, double lb, double rf, double rb){
+        DriveTrain.leftFront.setPower(lf);
+        DriveTrain.leftBack.setPower(lb);
+        DriveTrain.rightFront.setPower(rf);
+        DriveTrain.rightBack.setPower(rb);
     }
 }
