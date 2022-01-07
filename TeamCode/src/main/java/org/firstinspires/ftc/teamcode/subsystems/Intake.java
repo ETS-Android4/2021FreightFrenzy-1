@@ -16,6 +16,10 @@ public class Intake {
     //Intake constants
     private static final double INTAKE_POWER = 0.95;
 
+    //Constants for sensors
+    private static final double FRONT_SENSOR = 1950;
+    private static final double BACK_SENSOR = 1650;
+
     //Intake State
     private static INTAKE_STATE currentState = INTAKE_STATE.OFF;
 
@@ -66,6 +70,24 @@ public class Intake {
     public static void changeIntakeOff(){
         currentState = INTAKE_STATE.OFF;
     }
+
+    public static boolean ballInFrontSensor(){
+        if(intakeFrontSensor.red() > FRONT_SENSOR)
+            return true;
+        else
+            return false;
+    }
+
+    public static boolean ballInBackSensor(){
+        if(intakeFrontSensor.red() > BACK_SENSOR)
+            return true;
+        else
+            return false;
+    }
+
+    public static double getFrontConstant(){return FRONT_SENSOR;}
+
+    public static double getBackConstant(){return BACK_SENSOR;}
 
     //Changes the state of the intake based on the input
     public static void intakeChangeState(String direction){

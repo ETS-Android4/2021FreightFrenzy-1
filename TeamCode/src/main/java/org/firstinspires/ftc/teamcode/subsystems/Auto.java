@@ -153,22 +153,27 @@ public class Auto {
         double adjustedXHeading = 0;
         double adjustedYHeading = 0;
 
-        double currentColor;
-        double exitValue;
+        double currentColorFront;
+        double currentColorBack;
+        double exitValueFront;
+        double exitValueBack;
         double currentDistance;
         double exitValueDistance;
         int timerLength = timer;
 
-        currentColor = Double.MIN_VALUE;
-        exitValue = Double.MAX_VALUE;
+        currentColorFront = Double.MIN_VALUE;
+        currentColorBack = Double.MIN_VALUE;
+        exitValueFront = Double.MAX_VALUE;
+        exitValueBack = Double.MAX_VALUE;
 
         currentDistance = Double.MAX_VALUE;
         exitValueDistance = Double.MIN_VALUE;
 
 
-        while ((currentColor < exitValue && currentDistance > exitValueDistance) && timerLength >= 0) {
-            exitValue = 1650;
-            exitValueDistance = 10;
+        while ((currentColorFront < exitValueFront && currentColorBack < exitValueBack && currentDistance > exitValueDistance) && timerLength >= 0) {
+            exitValueFront = Intake.getFrontConstant();
+            exitValueBack = Intake.getBackConstant();
+            exitValueDistance = Arm.getGondolaConstant();
 
             DriveTrain.angles = DriveTrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
 
@@ -196,7 +201,8 @@ public class Auto {
             DriveTrain.leftBack.setPower((speed * adjustedXHeading + rotation) * Constants.TELEOP_LIMITER);
             DriveTrain.rightBack.setPower((speed * adjustedYHeading - rotation) * Constants.TELEOP_LIMITER);
 
-            currentColor = Intake.intakeFrontSensor.red();//leftDistanceSensor
+            currentColorFront = Intake.intakeFrontSensor.red();
+            currentColorBack = Intake.intakeBackSensor.red();
             currentDistance = Arm.getArmSensorLength();
 
             telemetry.addData("Distance: ", Arm.armSensor.getDistance(DistanceUnit.CM));
@@ -205,10 +211,12 @@ public class Auto {
             timerLength--;
         }
 
-        if(currentColor > exitValue)
-            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);//AQUA
+        if(currentColorFront > exitValueFront)
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
+        if(currentColorBack > exitValueBack)
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
         if(currentDistance < exitValueDistance)
-            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);//AQUA
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
 
         DriveTrain.leftFront.setPower(0);
         DriveTrain.leftBack.setPower(0);

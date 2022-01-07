@@ -37,6 +37,9 @@ public class Arm {
     private static final double ARM_SLOW = .2;
     private static String speed = "FAST";
 
+    //Constants for sensors
+    private static final double GONDOLA_SENSOR = 10;
+
     //States
     private static ARM_STATE currentArmState = ARM_STATE.IN;
     private static HEIGHT_STATE currentHeightState = HEIGHT_STATE.DOWN;
@@ -169,6 +172,17 @@ public class Arm {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public static void armInTele(){
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(-ARM_FAST);
+
+        arm.setPower(0);
+        currentArmState = ARM_STATE.IN;
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     public static ARM_STATE getArmState(){
         return currentArmState;
     }
@@ -191,6 +205,23 @@ public class Arm {
     public static double getArmSensorLength(){
         return armSensor.getDistance(DistanceUnit.CM);
     }
+
+    public static boolean ballInGondola(){
+        if(Arm.getArmSensorLength() < GONDOLA_SENSOR)
+            return true;
+        else
+            return false;
+    }
+
+    public static void changeArmIn(){
+        currentArmState = ARM_STATE.IN;
+    }
+
+    public static double getGondolaConstant(){
+        return GONDOLA_SENSOR;
+     }
+
+    public static double getArmPos(){return arm.getCurrentPosition();}
 
     //Changes the state of the height servos based on the input
     public static void heightChangeState(String pos){
@@ -262,7 +293,7 @@ public class Arm {
             stopArm();
         }
         else if(currentArmState == ARM_STATE.OUT_SLOW){
-            slideArm(-.2);
+            slideArm(.2);
         }
         else if(currentArmState == ARM_STATE.OUT_FAST){
             slideArm(.6);

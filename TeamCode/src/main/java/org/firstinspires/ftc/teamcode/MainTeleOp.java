@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
@@ -28,6 +29,7 @@ public class MainTeleOp extends LinearOpMode{
     private boolean ballInIntake = false;
     private boolean autoVibrate = false;
     private boolean vibrated = false;
+    private boolean armInAuto = false;
     private int intakeTimer = 0;
 
     public void runOpMode() throws InterruptedException {
@@ -60,7 +62,7 @@ public class MainTeleOp extends LinearOpMode{
             if(Arm.armIsIn())
                 vibrated = false;
 
-            if((Arm.getArmSensorLength() < 10 || Intake.intakeFrontSensor.red() > 1950) && !ballInGondola && !ballInIntake){
+            if((Arm.ballInGondola() || Intake.ballInFrontSensor()) && !ballInGondola && !ballInIntake){
                 ballInIntake = true;
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
             }
@@ -69,7 +71,7 @@ public class MainTeleOp extends LinearOpMode{
                 intakeTimer++;
             }
 
-            if(intakeTimer > 1 && Arm.getArmSensorLength() < 10){
+            if(intakeTimer > 1 && Arm.ballInGondola()){
                 Intake.changeIntakeBackwards();
                 ballInGondola = true;
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -81,7 +83,7 @@ public class MainTeleOp extends LinearOpMode{
                 Intake.changeIntakeBackwards();
             }
 
-            if(!ballInGondola && (Intake.intakeFrontSensor.red() > 1950 || Intake.intakeBackSensor.red() > 1650)){
+            if(!ballInGondola && (Intake.ballInFrontSensor() || Intake.ballInBackSensor())){
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
             }
 
@@ -137,12 +139,12 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             //Extend/retract arm fast
-            if (gamepad2.right_trigger > .2 && !armFlagFast && !autoVibrate) {
+            if (gamepad2.right_trigger > .2 && !armFlagFast && !autoVibrate && !armInAuto) {
                 armFlagFast = true;
                 Arm.armChangeState("OUT");
             }
             //Extend/retract arm fast
-            else if (gamepad2.left_trigger > .2 && !armFlagSlow && !autoVibrate){
+            else if (gamepad2.left_trigger > .2 && !armFlagSlow && !autoVibrate && !armInAuto){
                 armFlagSlow = true;
                 Arm.armChangeState("IN");
             }
@@ -159,6 +161,18 @@ public class MainTeleOp extends LinearOpMode{
 
             if(gamepad2.left_trigger <= .2 && gamepad2.right_trigger <= .2){
                 autoVibrate = false;
+            }
+
+            if(gamepad2.a && !armInAuto){
+                Arm.armInTele();
+            }
+
+            if(Arm.getArmPos() < 0){
+                Arm.arm.setPower(0);
+                Arm.changeArmIn();
+                Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armInAuto = false;
             }
 
             //Arm Out Up

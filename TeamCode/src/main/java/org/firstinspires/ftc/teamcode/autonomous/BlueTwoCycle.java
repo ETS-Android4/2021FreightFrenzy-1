@@ -18,9 +18,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 import java.util.List;
 
-@Autonomous(name= "Blue2Cycle", group= "Autonomous")
+@Autonomous(name= "BlueTwoCycle", group= "Autonomous")
 
-public class Blue2Cycle extends LinearOpMode {
+public class BlueTwoCycle extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = { "Ball", "Cube", "Duck", "Marker" };
     private static final String VUFORIA_KEY = "AW/D0F3/////AAABmT6CO76ZukEWtNAvh1kty819QDEF9SG9ZxbfUcbjoxBCe0UcoTGK19TZdmHtWDwxhrL4idOt1tdJE+h9YGDtZ7U/njHEqSZ7jflzurT4j/WXTCjeTCSf0oMqcgduLTDNz+XEXMbPSlnHbO9ZnEZBun7HHr6N06kpYu6QZmG6WRvibuKCe5IeZJ21RoIeCsdp3ho/f/+QQLlnqaa1dw6i4xMFM0e2IaxujhQiWnd4by23CkMPvzKhy6YP3wPBq+awpzEPLDZcD8l1i0SqmX7HNpmw4kXBrWzEimAzp1aqONVau4kIwCGwJFusMdErw9IL7KQ5VqMKN4Xl67s0pwotoXsA+5SlWQAIodipYKZnPzwO";
@@ -160,14 +160,14 @@ public class Blue2Cycle extends LinearOpMode {
 
         sleep(50);
 
-        if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+        if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
             int timerLength = 35;
-            while(timerLength > 0 && Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+            while(timerLength > 0 && !Intake.ballInFrontSensor() && !Arm.ballInGondola()){
                 timerLength--;
             }
         }
 
-        if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+        if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
             Auto.driveIntakeColor(0, .12, 35, telemetry);
         }
         else{
@@ -176,7 +176,7 @@ public class Blue2Cycle extends LinearOpMode {
 
         DriveTrain.cartesianDriveTimer(0, -.25, 10);
 
-        if(Arm.getArmSensorLength() > 10){
+        if(!Arm.ballInGondola()){
             int timerLength = 35;
             while(timerLength > 0 && Arm.getArmSensorLength() > 10){
                 timerLength--;
@@ -224,14 +224,14 @@ public class Blue2Cycle extends LinearOpMode {
 
         sleep(50);
 
-        if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+        if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
             int timerLength = 35;
-            while(timerLength > 0 && Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+            while(timerLength > 0 && !Intake.ballInFrontSensor() && !Arm.ballInGondola()){
                 timerLength--;
             }
         }
 
-        if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+        if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
             Auto.driveIntakeColor(0, .12, 35, telemetry);
         }
         else{
@@ -240,7 +240,7 @@ public class Blue2Cycle extends LinearOpMode {
 
         DriveTrain.cartesianDriveTimer(0, -.25, 10);
 
-        if(Arm.getArmSensorLength() > 10){
+        if(!Arm.ballInGondola()){
             int timerLength = 35;
             while(timerLength > 0 && Arm.getArmSensorLength() > 10){
                 timerLength--;
