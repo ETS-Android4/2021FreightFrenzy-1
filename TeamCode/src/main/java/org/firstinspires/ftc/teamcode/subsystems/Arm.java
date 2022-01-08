@@ -173,14 +173,10 @@ public class Arm {
     }
 
     public static void armInTele(){
+        currentHeightState = HEIGHT_STATE.DOWN;
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(-ARM_FAST);
-
-        arm.setPower(0);
-        currentArmState = ARM_STATE.IN;
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public static ARM_STATE getArmState(){

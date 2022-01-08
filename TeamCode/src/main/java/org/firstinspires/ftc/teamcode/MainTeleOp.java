@@ -164,10 +164,15 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             if(gamepad2.a && !armInAuto){
-                Arm.armInTele();
+                Arm.heightChangeState("DOWN");
+                armInAuto = true;
             }
 
-            if(Arm.getArmPos() < 0){
+            if(armInAuto){
+                Arm.arm.setPower(-0.6);
+            }
+
+            if(Arm.getArmPos() < 10 && armInAuto){
                 Arm.arm.setPower(0);
                 Arm.changeArmIn();
                 Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -252,7 +257,8 @@ public class MainTeleOp extends LinearOpMode{
 
             //Update States
             Carousel.carouselUpdatePosition(gamepad1.right_trigger);
-            Arm.armUpdatePosition();
+            if(!armInAuto)
+                Arm.armUpdatePosition();
             Intake.intakeUpdatePosition();
             if(!manualHeight)
                 Arm.heightUpdatePosition();
@@ -270,7 +276,7 @@ public class MainTeleOp extends LinearOpMode{
             //telemetry.addData("arm speed: ", Arm.getSpeed());
             telemetry.addData("height servo pos: ", Arm.heightServo1.getPosition());
             DriveTrain.gyroTele(telemetry);
-            */
+
 
             telemetry.addLine()
                     .addData("Floor color", " sensor")
@@ -290,10 +296,13 @@ public class MainTeleOp extends LinearOpMode{
             telemetry.addData("Distance to gondola: ", Arm.armSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("Distance to hub: ", Arm.gondolaSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("Dead Wheel pos: ", Auto.getYPositon());
+            telemetry.addData("Arm pos: ", Arm.getArmPos());
 
             DriveTrain.gyroTele(telemetry);
 
             telemetry.update();
+
+             */
         }
     }
 }
