@@ -30,7 +30,10 @@ public class MainTeleOp extends LinearOpMode{
     private boolean autoVibrate = false;
     private boolean vibrated = false;
     private boolean armInAuto = false;
+    private boolean armOutAuto = false;
+    private boolean backwardsFlag = false;
     private int intakeTimer = 0;
+    private int backwardsTimer = 0;
 
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
@@ -43,6 +46,7 @@ public class MainTeleOp extends LinearOpMode{
 
         while(opModeIsActive()){
 
+            /*****DriveTrain*****/
             DriveTrain.cartesianDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
             if(gamepad1.dpad_up){
@@ -57,43 +61,21 @@ public class MainTeleOp extends LinearOpMode{
                 Arm.stopArm();
                 autoVibrate = true;
                 vibrated = true;
-            }*/
+            }
 
             if(Arm.armIsIn())
                 vibrated = false;
+             */
 
-            if((Arm.ballInGondola() || Intake.ballInFrontSensor()) && !ballInGondola && !ballInIntake){
-                ballInIntake = true;
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
-            }
 
-            if(ballInIntake){
-                intakeTimer++;
-            }
-
-            if(intakeTimer > 3 && Arm.ballInGondola()){
-                Intake.changeIntakeBackwards();
-                ballInGondola = true;
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-            }else{
-                ballInIntake = false;
-            }
-
-            if(ballInGondola){
-                Intake.changeIntakeBackwards();
-            }
-
-            if(!ballInGondola && (Intake.ballInFrontSensor() || Intake.ballInBackSensor())){
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
-            }
-
+            /*****Intake*****/
             //Intake forward
             if (gamepad2.x && !intakeFlagFoward && !ballInGondola) {
                 intakeFlagFoward = true;
                 Intake.intakeChangeState("FORWARD");
             }
             //Intake backwards
-            else if (gamepad2.b && !intakeFlagReverse && !ballInGondola){
+            else if (gamepad2.b && !intakeFlagReverse /*&& !ballInGondola*/){
                 intakeFlagReverse = true;
                 Intake.intakeChangeState("REVERSE");
             }
@@ -107,8 +89,46 @@ public class MainTeleOp extends LinearOpMode{
                 intakeFlagReverse = false;
             }
 
+            //Check for something in intake, change LEDs
+            if((Arm.ballInGondola() || Intake.ballInFrontSensor()) && !ballInGondola && !ballInIntake){
+                ballInIntake = true;
+                intakeTimer = 0;
+                backwardsFlag = false;
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
+            }
 
+            //Start timer to intake backwards
+            if(ballInIntake){
+                intakeTimer++;
+            }
 
+            //When timer finishes, spin intake backwards
+            if(intakeTimer > 3 && Arm.ballInGondola() && !backwardsFlag){
+                Intake.changeIntakeBackwards();
+                ballInGondola = true;
+                backwardsFlag = true;
+                ballInIntake = false;
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }else if (!ballInIntake){
+                intakeTimer = 0;
+            }
+
+            if(backwardsFlag){
+                backwardsTimer++;
+            }
+
+            if(backwardsTimer > 10 && backwardsFlag){
+                Intake.changeIntakeOff();
+                backwardsFlag = false;
+                backwardsTimer = 0;
+            }
+
+            //Change LEDs aqua if something in intake
+            if(!ballInGondola && (Intake.ballInFrontSensor() || Intake.ballInBackSensor())){
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
+            }
+
+            /*****Carousel*****/
             //Change carousel color
             if(gamepad1.left_bumper){
                 Carousel.changeColor("BLUE");
@@ -129,7 +149,7 @@ public class MainTeleOp extends LinearOpMode{
                 carouselFlag = false;
             }
 
-
+            /*****Arm*****/
             //Change arm speed
             if(gamepad2.left_bumper){
                 Arm.changeSpeed("SLOW");
@@ -139,12 +159,12 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             //Extend/retract arm fast
-            if (gamepad2.right_trigger > .2 && !armFlagFast && !autoVibrate && !armInAuto) {
+            if (gamepad2.right_trigger > .2 && !armFlagFast && !autoVibrate && !armInAuto && !armOutAuto) {
                 armFlagFast = true;
                 Arm.armChangeState("OUT");
             }
             //Extend/retract arm fast
-            else if (gamepad2.left_trigger > .2 && !armFlagSlow && !autoVibrate && !armInAuto){
+            else if (gamepad2.left_trigger > .2 && !armFlagSlow && !autoVibrate && !armInAuto && !armOutAuto){
                 armFlagSlow = true;
                 Arm.armChangeState("IN");
             }
@@ -180,17 +200,34 @@ public class MainTeleOp extends LinearOpMode{
                 armInAuto = false;
             }
 
-            //Arm Out Up
-            /*if(gamepad2.y && !armFlag){
-                armFlag = true;
-                Arm.armChangeState("N/A");
+            if(gamepad2.y && !armOutAuto){
+                Arm.heightChangeState("UP");
+                armOutAuto = true;
             }
 
-            if(armFlag && !gamepad2.y){
-                armFlag = false;
-            }*/
+            if(armOutAuto){
+                Arm.arm.setPower(0.6);
+            }
+
+            if(Arm.getArmPos() > 990 && armOutAuto){
+                Arm.arm.setPower(0);
+                Arm.changeArmIn();
+                Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armOutAuto = false;
+            }
 
 
+            if(gamepad2.dpad_left) {
+                Arm.releaseFreight();
+                ballInGondola = false;
+                ballInIntake = false;
+                intakeTimer = 0;
+                Intake.changeIntakeOff();
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            }
+
+            /*****Arm Height*****/
 
             //Raise and lower arm
             if(gamepad2.dpad_up && !heightFlag) {
@@ -205,11 +242,7 @@ public class MainTeleOp extends LinearOpMode{
                 heightFlag = true;
                 manualHeight = false;
                 Arm.heightChangeState("DOWN");
-            } /*else if(gamepad2.dpad_left && !heightFlag){
-                heightFlag = true;
-                Arm.heightChangeState("MAX");
-            }*/
-            else if(gamepad2.left_stick_y > .3 && !heightFlag){
+            } else if(gamepad2.left_stick_y > .3 && !heightFlag){
                 heightFlag = true;
                 manualHeight = false;
                 Arm.heightChangeState("MAX");
@@ -218,15 +251,6 @@ public class MainTeleOp extends LinearOpMode{
             //Reset height flag
             if(heightFlag && !gamepad2.dpad_up && !gamepad2.dpad_right && !gamepad2.dpad_down  && gamepad2.left_stick_y <= .3/* && !gamepad2.dpad_left*/){
                 heightFlag = false;
-            }
-
-            if(gamepad2.dpad_left) {
-                Arm.releaseFreight();
-                ballInGondola = false;
-                ballInIntake = false;
-                intakeTimer = 0;
-                Intake.changeIntakeOff();
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
             }
 
             if(gamepad2.right_stick_y < -.2 && !manualHeightFlag){

@@ -213,6 +213,10 @@ public class Arm {
         currentArmState = ARM_STATE.IN;
     }
 
+    public static void changeArmOut(){
+        currentArmState = ARM_STATE.OUT;
+    }
+
     public static double getGondolaConstant(){
         return GONDOLA_SENSOR;
      }
