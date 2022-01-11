@@ -135,7 +135,7 @@ public class RedTwoCycle extends LinearOpMode {
         else if(label.equals("RIGHT")) {
             Arm.armUp();
 
-            sleep(250);
+            sleep(350);
 
             Arm.armOutUp();
 
@@ -150,7 +150,7 @@ public class RedTwoCycle extends LinearOpMode {
             Arm.armIn();
         }
 
-        DriveTrain.driveToLineBlue(-.22,"WHITE", telemetry);
+        DriveTrain.driveToWhiteLineBlue(-.22,"WHITE", telemetry);
 
         Intake.intake();
 
@@ -185,11 +185,11 @@ public class RedTwoCycle extends LinearOpMode {
 
         Intake.setBackwards();
 
-        DriveTrain.cartesianDriveTimer(-.4, .1, 25);
+        DriveTrain.cartesianDriveTimer(.4, .1, 25);
 
         Arm.armMid();
 
-        DriveTrain.driveToLineBlue(.2, "WHITE", telemetry);
+        DriveTrain.driveToWhiteLineBlue(.2, "WHITE", telemetry);
 
         Auto.resetEncoder();
 
@@ -214,7 +214,7 @@ public class RedTwoCycle extends LinearOpMode {
 
         Arm.armIn();
 
-        DriveTrain.driveToLineBlue(-.22,"WHITE", telemetry);
+        DriveTrain.driveToWhiteLineBlue(-.22,"WHITE", telemetry);
 
         Intake.intake();
 
@@ -249,11 +249,11 @@ public class RedTwoCycle extends LinearOpMode {
 
         Intake.setBackwards();
 
-        DriveTrain.cartesianDriveTimer(-.4, .1, 25);
+        DriveTrain.cartesianDriveTimer(.4, .1, 25);
 
         Arm.armMid();
 
-        DriveTrain.driveToLineBlue(.2, "WHITE", telemetry);
+        DriveTrain.driveToWhiteLineBlue(.2, "WHITE", telemetry);
 
         Auto.resetEncoder();
 
@@ -278,11 +278,11 @@ public class RedTwoCycle extends LinearOpMode {
 
         Arm.armIn();
 
-        DriveTrain.driveToLineBlue(-.22,"WHITE", telemetry);
+        DriveTrain.driveToWhiteLineBlue(-.22,"WHITE", telemetry);
 
         DriveTrain.cartesianDriveTimer(0, -.25, 15);
 
-        DriveTrain.cartesianDriveTimer(.4, 0, 60);
+        DriveTrain.cartesianDriveTimer(-.4, 0, 60);
     }
 
     private void initVuforia() {

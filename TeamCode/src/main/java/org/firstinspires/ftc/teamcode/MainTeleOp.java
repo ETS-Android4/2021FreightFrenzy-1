@@ -71,7 +71,7 @@ public class MainTeleOp extends LinearOpMode{
                 intakeTimer++;
             }
 
-            if(intakeTimer > 1 && Arm.ballInGondola()){
+            if(intakeTimer > 3 && Arm.ballInGondola()){
                 Intake.changeIntakeBackwards();
                 ballInGondola = true;
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -254,7 +254,6 @@ public class MainTeleOp extends LinearOpMode{
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
             }
 
-
             //Update States
             Carousel.carouselUpdatePosition(gamepad1.right_trigger);
             if(!armInAuto)
@@ -278,11 +277,13 @@ public class MainTeleOp extends LinearOpMode{
             DriveTrain.gyroTele(telemetry);
 
 
+            */
             telemetry.addLine()
                     .addData("Floor color", " sensor")
                     .addData("Red", "%.3f", (double) DriveTrain.floorColorSensor.red())
                     .addData("Blue", "%.3f", (double) DriveTrain.floorColorSensor.blue())
                     .addData("Alpha", "%.3f", (double) DriveTrain.floorColorSensor.alpha());
+            /*
             telemetry.addLine()
                     .addData("Intake front", " sensor")
                     .addData("Red", "%.3f", (double) Intake.intakeFrontSensor.red())
@@ -303,6 +304,8 @@ public class MainTeleOp extends LinearOpMode{
             telemetry.update();
 
              */
+            telemetry.update();
+
         }
     }
 }

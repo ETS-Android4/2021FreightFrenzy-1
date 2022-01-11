@@ -172,6 +172,17 @@ public class BlueDuckCycle extends LinearOpMode {
 
             Arm.armIn();
         }
+
+        Auto.resetEncoder();
+
+        Auto.goToPosition(-41 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+
+        Auto.autoBrake(25);
+
+        DriveTrain.driveToLineBlue(-.4, -.2, "BLUE", telemetry, 100);
+
+        DriveTrain.cartesianDriveTimer(-.4, 0, 15);
+
     }
 
     private void initVuforia() {

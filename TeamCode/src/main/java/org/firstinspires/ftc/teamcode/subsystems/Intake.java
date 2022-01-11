@@ -18,7 +18,7 @@ public class Intake {
 
     //Constants for sensors
     private static final double FRONT_SENSOR = 1950;
-    private static final double BACK_SENSOR = 1650;
+    private static final double BACK_SENSOR = 1850;
 
     //Intake State
     private static INTAKE_STATE currentState = INTAKE_STATE.OFF;
@@ -79,7 +79,7 @@ public class Intake {
     }
 
     public static boolean ballInBackSensor(){
-        if(intakeFrontSensor.red() > BACK_SENSOR)
+        if(intakeBackSensor.red() > BACK_SENSOR)
             return true;
         else
             return false;

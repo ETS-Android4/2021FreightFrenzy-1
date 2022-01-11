@@ -253,11 +253,11 @@ public class DriveTrain {
         DriveTrain.leftBack.setPower(0);
     }
 
-    public static void driveToLineBlue(double power, String color, Telemetry telemetry) throws InterruptedException {
+    public static void driveToWhiteLineBlue(double power, String color, Telemetry telemetry) throws InterruptedException {
         double minWhite = Double.MAX_VALUE;
         double maxWhite = Double.MIN_VALUE;
         if(color.equals("WHITE")) {
-            while(floorColorSensor.alpha() < 75){//480, 680
+            while(floorColorSensor.alpha() < 110){//480, 680
                 if(DriveTrain.floorColorSensor.alpha() > maxWhite){
                     maxWhite = DriveTrain.floorColorSensor.alpha();
                 }
@@ -274,6 +274,60 @@ public class DriveTrain {
                 telemetry.addData("Min White: ", minWhite);
                 telemetry.update();
             }
+            leftFront.setPower(0);
+            rightFront.setPower(0);
+            leftBack.setPower(0);
+            rightBack.setPower(0);
+        }
+    }
+
+    public static void driveToLineBlue(double x, double y, String color, Telemetry telemetry, int timer) throws InterruptedException {
+        double minWhite = Double.MAX_VALUE;
+        double maxWhite = Double.MIN_VALUE;
+        y = -y;
+        double speed = Math.sqrt(2) * Math.hypot(x, y);
+        double command = Math.atan2(y, -x) + Math.PI/2;
+        double rotation = 0;
+        double startingHeading = angles.firstAngle;
+        double currentError = 0;
+        double adjustedXHeading = 0;
+        double adjustedYHeading = 0;
+
+        int timerLength = timer;
+
+        if(color.equals("BLUE")) {
+            while(floorColorSensor.alpha() < 110 && timerLength > 0){//480, 680
+                angles = DriveTrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+                adjustedXHeading = Math.cos(command + angles.firstAngle + Math.PI / 4);
+                adjustedYHeading = Math.sin(command + angles.firstAngle + Math.PI / 4);
+
+                currentError = angles.firstAngle - startingHeading;
+
+                if(Math.abs(currentError) > (Math.PI / 12)){
+                    rotation = 0.40;
+                }
+                else{
+                    if(Math.abs(currentError) > (Math.PI / 180)){
+                        rotation = Math.abs(currentError / 0.6);
+                    }
+                    else{
+                        rotation = 0;
+                    }
+                }
+
+                if(currentError < 0){
+                    rotation = rotation * -1;
+                }
+
+                leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER);
+                rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER);
+                leftBack.setPower((speed * adjustedXHeading + rotation) * Constants.TELEOP_LIMITER);
+                rightBack.setPower((speed * adjustedYHeading - rotation) * Constants.TELEOP_LIMITER);
+                Thread.sleep(20);
+                timerLength--;
+            }
+
             leftFront.setPower(0);
             rightFront.setPower(0);
             leftBack.setPower(0);
