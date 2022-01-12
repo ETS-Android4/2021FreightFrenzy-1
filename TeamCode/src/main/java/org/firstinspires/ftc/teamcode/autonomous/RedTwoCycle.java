@@ -120,7 +120,7 @@ public class RedTwoCycle extends LinearOpMode {
         else if(label.equals("MIDDLE")){
             Arm.armMid();
 
-            sleep(200);
+            sleep(250);
 
             Arm.armOutMid();
 
@@ -135,7 +135,7 @@ public class RedTwoCycle extends LinearOpMode {
         else if(label.equals("RIGHT")) {
             Arm.armUp();
 
-            sleep(350);
+            sleep(1000);
 
             Arm.armOutUp();
 
@@ -154,20 +154,20 @@ public class RedTwoCycle extends LinearOpMode {
 
         Intake.intake();
 
-        DriveTrain.cartesianDriveTimer(0, -.25, 15);
+        DriveTrain.cartesianDriveTimer(0, -.25, 10);
 
         Auto.driveIntakeColor(0, -.12, 35, telemetry);
 
         sleep(50);
 
-        if(Intake.intakeBackSensor.red() < 1650 && !Arm.ballInGondola()){
+        if(!Intake.ballInBackSensor() && !Arm.ballInGondola()){
             int timerLength = 35;
-            while(timerLength > 0 && Intake.intakeBackSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+            while(timerLength > 0 && !Intake.ballInFrontSensor() && !Arm.ballInGondola()){
                 timerLength--;
             }
         }
 
-        if(Intake.intakeBackSensor.red() < 1650 && !Arm.ballInGondola()){
+        if(!Intake.ballInBackSensor() && !Arm.ballInGondola()){
             Auto.driveIntakeColor(0, -.12, 35, telemetry);
         }
         else{
@@ -177,7 +177,7 @@ public class RedTwoCycle extends LinearOpMode {
         DriveTrain.cartesianDriveTimer(0, .25, 10);
 
         if(!Arm.ballInGondola()){
-            int timerLength = 35;
+            int timerLength = 20;
             while(timerLength > 0 && Arm.getArmSensorLength() > 10){
                 timerLength--;
             }
@@ -185,7 +185,7 @@ public class RedTwoCycle extends LinearOpMode {
 
         Intake.setBackwards();
 
-        DriveTrain.cartesianDriveTimer(.4, .1, 25);
+        DriveTrain.cartesianDriveTimer(.8, .1, 10);
 
         Arm.armMid();
 
@@ -195,7 +195,7 @@ public class RedTwoCycle extends LinearOpMode {
 
         Intake.stop();
 
-        Auto.goToPosition(33 * Constants.COUNTS_PER_INCH, .6, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.goToPosition(37 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
         Auto.autoBrake(25);
@@ -218,20 +218,20 @@ public class RedTwoCycle extends LinearOpMode {
 
         Intake.intake();
 
-        DriveTrain.cartesianDriveTimer(0, -.25, 20);
+        DriveTrain.cartesianDriveTimer(0, -.25, 10);
 
         Auto.driveIntakeColor(0, -.12, 35, telemetry);
 
         sleep(50);
 
-        if(Intake.intakeBackSensor.red() < 1650 && !Arm.ballInGondola()){
+        if(!Intake.ballInBackSensor() && !Arm.ballInGondola()){
             int timerLength = 35;
-            while(timerLength > 0 && Intake.intakeBackSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
+            while(timerLength > 0 && !Intake.ballInFrontSensor() && !Arm.ballInGondola()){
                 timerLength--;
             }
         }
 
-        if(Intake.intakeBackSensor.red() < 1650 && !Arm.ballInGondola()){
+        if(!Intake.ballInBackSensor() && !Arm.ballInGondola()){
             Auto.driveIntakeColor(0, -.12, 35, telemetry);
         }
         else{
@@ -241,7 +241,7 @@ public class RedTwoCycle extends LinearOpMode {
         DriveTrain.cartesianDriveTimer(0, .25, 10);
 
         if(!Arm.ballInGondola()){
-            int timerLength = 35;
+            int timerLength = 20;
             while(timerLength > 0 && Arm.getArmSensorLength() > 10){
                 timerLength--;
             }
@@ -249,7 +249,7 @@ public class RedTwoCycle extends LinearOpMode {
 
         Intake.setBackwards();
 
-        DriveTrain.cartesianDriveTimer(.4, .1, 25);
+        DriveTrain.cartesianDriveTimer(.8, .1, 10);
 
         Arm.armMid();
 
@@ -259,7 +259,7 @@ public class RedTwoCycle extends LinearOpMode {
 
         Intake.stop();
 
-        Auto.goToPosition(33 * Constants.COUNTS_PER_INCH, .6, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.goToPosition(37 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
         Auto.autoBrake(25);
@@ -280,9 +280,9 @@ public class RedTwoCycle extends LinearOpMode {
 
         DriveTrain.driveToWhiteLineBlue(-.22,"WHITE", telemetry);
 
-        DriveTrain.cartesianDriveTimer(0, -.25, 15);
+        DriveTrain.cartesianDriveTimer(0, -.25, 8);
 
-        DriveTrain.cartesianDriveTimer(-.4, 0, 60);
+        DriveTrain.cartesianDriveTimer(-.4, 0, 30);
     }
 
     private void initVuforia() {

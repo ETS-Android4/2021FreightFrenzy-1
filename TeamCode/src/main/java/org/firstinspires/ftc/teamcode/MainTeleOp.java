@@ -212,8 +212,6 @@ public class MainTeleOp extends LinearOpMode{
             if(Arm.getArmPos() > 990 && armOutAuto){
                 Arm.arm.setPower(0);
                 Arm.changeArmIn();
-                Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armOutAuto = false;
             }
 
@@ -280,7 +278,7 @@ public class MainTeleOp extends LinearOpMode{
 
             //Update States
             Carousel.carouselUpdatePosition(gamepad1.right_trigger);
-            if(!armInAuto)
+            if(!armInAuto && !armOutAuto)
                 Arm.armUpdatePosition();
             Intake.intakeUpdatePosition();
             if(!manualHeight)
@@ -301,13 +299,13 @@ public class MainTeleOp extends LinearOpMode{
             DriveTrain.gyroTele(telemetry);
 
 
-            */
+
             telemetry.addLine()
                     .addData("Floor color", " sensor")
                     .addData("Red", "%.3f", (double) DriveTrain.floorColorSensor.red())
                     .addData("Blue", "%.3f", (double) DriveTrain.floorColorSensor.blue())
                     .addData("Alpha", "%.3f", (double) DriveTrain.floorColorSensor.alpha());
-            /*
+
             telemetry.addLine()
                     .addData("Intake front", " sensor")
                     .addData("Red", "%.3f", (double) Intake.intakeFrontSensor.red())
@@ -325,10 +323,11 @@ public class MainTeleOp extends LinearOpMode{
 
             DriveTrain.gyroTele(telemetry);
 
-            telemetry.update();
 
-             */
+
             telemetry.update();
+            
+             */
 
         }
     }

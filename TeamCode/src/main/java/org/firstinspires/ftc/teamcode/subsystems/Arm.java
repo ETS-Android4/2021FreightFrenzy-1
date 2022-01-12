@@ -31,6 +31,7 @@ public class Arm {
     private static final double ARM_UP = 0.35;
     private static final double ARM_MID = 0.5;
     private static final double ARM_MAX = 0.2;
+    private static final double ARM_FAR = 0.4;
 
     //Constants for arm powers
     private static final double ARM_FAST = .6;
@@ -38,7 +39,7 @@ public class Arm {
     private static String speed = "FAST";
 
     //Constants for sensors
-    private static final double GONDOLA_SENSOR = 10;
+    private static final double GONDOLA_SENSOR = 12;
 
     //States
     private static ARM_STATE currentArmState = ARM_STATE.IN;
@@ -110,6 +111,11 @@ public class Arm {
         heightServo2.setPosition(ARM_MAX);
     }
 
+    public static void armFar(){
+        heightServo1.setPosition(ARM_FAR);
+        heightServo2.setPosition(ARM_FAR);
+    }
+
     public static void releaseFreight() throws InterruptedException {
         vibrator.setPosition(VIBRATOR_OPEN);
         Thread.sleep(200);
@@ -160,8 +166,20 @@ public class Arm {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public static void armOutLong(){
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while(arm.getCurrentPosition() < 1400){
+            arm.setTargetPosition(1400);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(ARM_FAST);
+        }
+        arm.setPower(0);
+        currentArmState = ARM_STATE.OUT;
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     public static void armIn(){
-        while(arm.getCurrentPosition() > 0){
+        while(arm.getCurrentPosition() > 10){
             arm.setTargetPosition(0);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(-ARM_FAST);

@@ -256,8 +256,9 @@ public class DriveTrain {
     public static void driveToWhiteLineBlue(double power, String color, Telemetry telemetry) throws InterruptedException {
         double minWhite = Double.MAX_VALUE;
         double maxWhite = Double.MIN_VALUE;
+        double exitValue = DriveTrain.floorColorSensor.alpha() + 15;
         if(color.equals("WHITE")) {
-            while(floorColorSensor.alpha() < 110){//480, 680
+            while(maxWhite < exitValue && DriveTrain.floorColorSensor.alpha() < exitValue){//480, 680
                 if(DriveTrain.floorColorSensor.alpha() > maxWhite){
                     maxWhite = DriveTrain.floorColorSensor.alpha();
                 }
@@ -266,9 +267,9 @@ public class DriveTrain {
                     minWhite = DriveTrain.floorColorSensor.alpha();
                 }
                 leftFront.setPower(power);
-                rightFront.setPower(power + (power * .15));
+                rightFront.setPower(power * 1.15);
                 leftBack.setPower(power);
-                rightBack.setPower(power + (power * .15));
+                rightBack.setPower(power * 1.15);
 //                Intake.releaseAll();
                 telemetry.addData("Max White: ", maxWhite);
                 telemetry.addData("Min White: ", minWhite);
