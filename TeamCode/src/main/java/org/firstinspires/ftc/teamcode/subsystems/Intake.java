@@ -17,7 +17,7 @@ public class Intake {
     private static final double INTAKE_POWER = 0.95;
 
     //Constants for sensors
-    private static final double FRONT_SENSOR = 1950;
+    private static final double FRONT_SENSOR = 1850;
     private static final double BACK_SENSOR = 1850;
 
     //Intake State

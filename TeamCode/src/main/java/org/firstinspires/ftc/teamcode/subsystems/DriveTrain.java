@@ -253,11 +253,39 @@ public class DriveTrain {
         DriveTrain.leftBack.setPower(0);
     }
 
-    public static void driveToWhiteLineBlue(double power, String color, Telemetry telemetry) throws InterruptedException {
-        double minWhite = Double.MAX_VALUE;
-        double maxWhite = Double.MIN_VALUE;
-        double exitValue = DriveTrain.floorColorSensor.alpha() + 15;
+    public static void driveToLineBlue(double power, String color, Telemetry telemetry) throws InterruptedException {
+        double multiplier = 1.5;
         if(color.equals("WHITE")) {
+            double minWhite = Double.MAX_VALUE;
+            double maxWhite = Double.MIN_VALUE;
+            double exitValue = DriveTrain.floorColorSensor.alpha() + 15;
+            do{
+                if(DriveTrain.floorColorSensor.alpha() > maxWhite){
+                    maxWhite = DriveTrain.floorColorSensor.alpha();
+                }
+
+                if (DriveTrain.floorColorSensor.alpha() < minWhite){
+                    minWhite = DriveTrain.floorColorSensor.alpha();
+                }
+
+                if(power >= 0){
+                    leftFront.setPower(power);
+                    rightFront.setPower(power * multiplier);
+                    leftBack.setPower(power * multiplier);
+                    rightBack.setPower(power);
+                }
+                else if (power < 0){
+                    leftFront.setPower(power * multiplier);
+                    rightFront.setPower(power);
+                    leftBack.setPower(power);
+                    rightBack.setPower(power * multiplier);
+                }
+
+                telemetry.addData("Max White: ", maxWhite);
+                telemetry.addData("Min White: ", minWhite);
+                telemetry.update();
+            }while(maxWhite < exitValue && DriveTrain.floorColorSensor.alpha() < exitValue);
+            /*
             while(maxWhite < exitValue && DriveTrain.floorColorSensor.alpha() < exitValue){//480, 680
                 if(DriveTrain.floorColorSensor.alpha() > maxWhite){
                     maxWhite = DriveTrain.floorColorSensor.alpha();
@@ -265,6 +293,35 @@ public class DriveTrain {
 
                 if (DriveTrain.floorColorSensor.alpha() < minWhite){
                     minWhite = DriveTrain.floorColorSensor.alpha();
+                }
+                leftFront.setPower(power);
+                rightFront.setPower(power * 1.15);
+                leftBack.setPower(power);
+                rightBack.setPower(power * 1.15);
+//                Intake.releaseAll();
+                telemetry.addData("Max White: ", maxWhite);
+                telemetry.addData("Min White: ", minWhite);
+                telemetry.update();
+            }
+            */
+
+            leftFront.setPower(0);
+            rightFront.setPower(0);
+            leftBack.setPower(0);
+            rightBack.setPower(0);
+        }
+
+        if(color.equals("RED")) {
+            double minWhite = Double.MAX_VALUE;
+            double maxWhite = Double.MIN_VALUE;
+            double exitValue = DriveTrain.floorColorSensor.red() + 15;
+            while(maxWhite < exitValue && DriveTrain.floorColorSensor.red() < exitValue){//480, 680
+                if(DriveTrain.floorColorSensor.alpha() > maxWhite){
+                    maxWhite = DriveTrain.floorColorSensor.red();
+                }
+
+                if (DriveTrain.floorColorSensor.alpha() < minWhite){
+                    minWhite = DriveTrain.floorColorSensor.red();
                 }
                 leftFront.setPower(power);
                 rightFront.setPower(power * 1.15);

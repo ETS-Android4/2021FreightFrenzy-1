@@ -104,21 +104,25 @@ public class BlueDuckCycle extends LinearOpMode {
 
         waitForStart();
 
-        Auto.powerMotorsIndiv(0, 0, -.2, 0);
+        DriveTrain.setRunMode("RUN_WITHOUT_ENCODER");
+
+        Auto.powerMotorsIndiv(-.3, -.3, -.3, -.3);
 
         sleep(1000);
 
-        Carousel.spin(-.28);
+        Carousel.spin(-.18);
 
-        sleep(2500);
+        sleep(3500);
 
         Carousel.brake();
 
         Carousel.stop();
 
+        DriveTrain.setRunMode("RUN_USING_ENCODER");
+
         Auto.powerMotors(0);
 
-        DriveTrain.customDrive(-.6, 0, .6, 0, 20000);
+        DriveTrain.customDrive(-.4, 0, .4, 0, 20000);
 
         DriveTrain.resetGyro();
 
@@ -127,7 +131,23 @@ public class BlueDuckCycle extends LinearOpMode {
 
         Auto.autoBrake(50);
 
-        if(label == null || label.equals("LEFT")){
+        if(label == null || label.equals("RIGHT")) {
+            Arm.armUp();
+
+            sleep(1000);
+
+            Arm.armOutUp();
+
+            sleep(200);
+
+            Arm.releaseFreight();
+
+            sleep(100);
+
+            Arm.armDown();
+
+            Arm.armIn();
+        }else if(label.equals("LEFT")){
             Arm.armDown();
 
             Arm.armOutDown();
@@ -155,23 +175,7 @@ public class BlueDuckCycle extends LinearOpMode {
 
             Arm.armIn();
         }
-        else if(label.equals("RIGHT")) {
-            Arm.armUp();
 
-            sleep(1000);
-
-            Arm.armOutUp();
-
-            sleep(200);
-
-            Arm.releaseFreight();
-
-            sleep(100);
-
-            Arm.armDown();
-
-            Arm.armIn();
-        }
 
         Auto.resetEncoder();
 
@@ -179,9 +183,11 @@ public class BlueDuckCycle extends LinearOpMode {
 
         Auto.autoBrake(25);
 
-        DriveTrain.driveToLineBlue(-.4, -.2, "BLUE", telemetry, 100);
+        DriveTrain.driveToLineBlue(-.4, -.2, "BLUE", telemetry, 50);
 
-        DriveTrain.cartesianDriveTimer(-.4, 0, 15);
+        //DriveTrain.cartesianDriveTimer(-.4, 0, 5);
+
+        DriveTrain.cartesianDriveTimer(0, -.2, 5);
 
     }
 

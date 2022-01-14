@@ -70,7 +70,7 @@ public class MainTeleOp extends LinearOpMode{
 
             /*****Intake*****/
             //Intake forward
-            if (gamepad2.x && !intakeFlagFoward && !ballInGondola) {
+            if (gamepad2.x && !intakeFlagFoward && !ballInGondola && !backwardsFlag) {
                 intakeFlagFoward = true;
                 Intake.intakeChangeState("FORWARD");
             }
@@ -82,10 +82,10 @@ public class MainTeleOp extends LinearOpMode{
 
             //Reset intakes flags
             if(intakeFlagFoward && !gamepad2.x){
-                Intake.intakeChangeState("FORWARD");
+                Intake.intakeChangeState("N/A");
                 intakeFlagFoward = false;
             } else if(intakeFlagReverse && !gamepad2.b){
-                Intake.intakeChangeState("REVERSE");
+                Intake.intakeChangeState("N/A");
                 intakeFlagReverse = false;
             }
 
@@ -306,6 +306,7 @@ public class MainTeleOp extends LinearOpMode{
                     .addData("Blue", "%.3f", (double) DriveTrain.floorColorSensor.blue())
                     .addData("Alpha", "%.3f", (double) DriveTrain.floorColorSensor.alpha());
 
+
             telemetry.addLine()
                     .addData("Intake front", " sensor")
                     .addData("Red", "%.3f", (double) Intake.intakeFrontSensor.red())
@@ -316,6 +317,7 @@ public class MainTeleOp extends LinearOpMode{
                     .addData("Red", "%.3f", (double) Intake.intakeBackSensor.red())
                     .addData("Blue", "%.3f", (double) Intake.intakeBackSensor.blue())
                     .addData("Alpha", "%.3f", (double) Intake.intakeBackSensor.alpha());
+
             telemetry.addData("Distance to gondola: ", Arm.armSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("Distance to hub: ", Arm.gondolaSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("Dead Wheel pos: ", Auto.getYPositon());
@@ -329,6 +331,7 @@ public class MainTeleOp extends LinearOpMode{
             
              */
 
+            //telemetry.update();
         }
     }
 }

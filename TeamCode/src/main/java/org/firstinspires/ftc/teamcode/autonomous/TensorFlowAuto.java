@@ -139,7 +139,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             //finishes preloaded block, begin first cycle
 
-            DriveTrain.driveToWhiteLineBlue(.22,"WHITE", telemetry);
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             Intake.intake();
 
@@ -178,7 +178,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armMid();
 
-            DriveTrain.driveToWhiteLineBlue(-.2, "WHITE", telemetry);
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
 
             //DriveTrain.cartesianDriveTimer(.4, 0, 13);
 
@@ -205,7 +205,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armDown();
 
-            DriveTrain.driveToWhiteLineBlue(.22,"WHITE", telemetry);
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             Intake.intake();
 
@@ -244,7 +244,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armMid();
 
-            DriveTrain.driveToWhiteLineBlue(-.2, "WHITE", telemetry);
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
 
             //DriveTrain.cartesianDriveTimer(.4, 0, 13);
 
@@ -271,7 +271,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armDown();
 
-            DriveTrain.driveToWhiteLineBlue(.22,"WHITE", telemetry);
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             DriveTrain.cartesianDriveTimer(0, .25, 15);
 
@@ -296,7 +296,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             //finishes preloaded block, begin first cycle
 
-            DriveTrain.driveToWhiteLineBlue(.22,"WHITE", telemetry);
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             Intake.intake();
 
@@ -335,7 +335,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armMid();
 
-            DriveTrain.driveToWhiteLineBlue(-.2, "WHITE", telemetry);
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
 
             //DriveTrain.cartesianDriveTimer(.4, 0, 13);
 
@@ -362,7 +362,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armDown();
 
-            DriveTrain.driveToWhiteLineBlue(.22,"WHITE", telemetry);
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             Intake.intake();
 
@@ -401,7 +401,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armMid();
 
-            DriveTrain.driveToWhiteLineBlue(-.2, "WHITE", telemetry);
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
 
             //DriveTrain.cartesianDriveTimer(.4, 0, 13);
 
@@ -428,7 +428,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armDown();
 
-            DriveTrain.driveToWhiteLineBlue(.22,"WHITE", telemetry);
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             DriveTrain.cartesianDriveTimer(0, .25, 15);
 
@@ -457,7 +457,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             //finishes preloaded block, begin first cycle
 
-            DriveTrain.driveToWhiteLineBlue(.22,"WHITE", telemetry);
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             Intake.intake();
 
@@ -496,7 +496,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armMid();
 
-            DriveTrain.driveToWhiteLineBlue(-.2, "WHITE", telemetry);
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
 
             //DriveTrain.cartesianDriveTimer(.4, 0, 13);
 
@@ -523,7 +523,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armIn();
 
-            DriveTrain.driveToWhiteLineBlue(.22,"WHITE", telemetry);
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             Intake.intake();
 
@@ -562,7 +562,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armMid();
 
-            DriveTrain.driveToWhiteLineBlue(-.2, "WHITE", telemetry);
+            DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
 
             //DriveTrain.cartesianDriveTimer(.4, 0, 13);
 
@@ -589,7 +589,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             Arm.armIn();
 
-            DriveTrain.driveToWhiteLineBlue(.22,"WHITE", telemetry);
+            DriveTrain.driveToLineBlue(.22,"WHITE", telemetry);
 
             DriveTrain.cartesianDriveTimer(0, .25, 15);
 

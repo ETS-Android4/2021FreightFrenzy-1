@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -50,13 +49,13 @@ public class RedDuckCycle extends LinearOpMode {
 
         DriveTrain.setRunMode("RUN_WITHOUT_ENCODER");
 
-        Auto.powerMotorsIndiv(-.07, -0.07, -.07, -.07);
+        Auto.powerMotorsIndiv(-.2, -.2, -.2, -.2);
 
-        sleep(1000);
+        sleep(500);
 
-        Carousel.spin(.22);
+        Carousel.spin(.16);
 
-        sleep(2500);
+        sleep(4000);
 
         Carousel.brake();
 
@@ -70,13 +69,17 @@ public class RedDuckCycle extends LinearOpMode {
 
         DriveTrain.cartesianDriveTimer(.2, 0, 15);
 
-        DriveTrain.customDrive(-.7, .2, .7, -.2, 20000);
+        DriveTrain.customDrive(-.5, .14, .5, -.14, 25000);
 
-        DriveTrain.cartesianDriveTimer(0, -.25, 15);
+        //DriveTrain.cartesianDriveTimer(0, .25, 5);
+
+        DriveTrain.driveToLineBlue(-.15,"RED", telemetry);
 
         DriveTrain.resetGyro();
 
-        Auto.goToPosition(24 * Constants.COUNTS_PER_INCH, .25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.resetEncoder();
+
+        Auto.goToPosition(23 * Constants.COUNTS_PER_INCH, .25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
         Auto.autoBrake(50);
@@ -110,7 +113,21 @@ public class RedDuckCycle extends LinearOpMode {
             telemetry.update();
         }
 
-        if(label == null || label.equals("LEFT")){
+        if(label == null || label.equals("RIGHT")) {
+            Arm.armFar();
+
+            sleep(750);
+
+            Arm.armOutLong();
+
+            Arm.arm.setPower(.3);
+
+            Arm.releaseFreight();
+
+            Arm.arm.setPower(0);
+
+            Arm.armIn();
+        } else if(label.equals("LEFT")){
             Arm.armDown();
 
             sleep(100);
@@ -123,7 +140,7 @@ public class RedDuckCycle extends LinearOpMode {
 
             Arm.arm.setPower(0);
 
-            sleep(2000);
+            Arm.armIn();
         }
         else if(label.equals("MIDDLE")){
             Arm.armMid();
@@ -138,28 +155,20 @@ public class RedDuckCycle extends LinearOpMode {
 
             Arm.arm.setPower(0);
 
-            sleep(2000);
-        }
-        else if(label.equals("RIGHT")) {
-            Arm.armFar();
-
-            sleep(750);
-
-            Arm.armOutLong();
-
-            Arm.arm.setPower(.3);
-
-            Arm.releaseFreight();
-
-            Arm.arm.setPower(0);
-
-            sleep(2000);
+            Arm.armIn();
         }
 
-        DriveTrain.driveToLineBlue(0, -.2, "BLUE", telemetry, 100);
 
-        DriveTrain.cartesianDriveTimer(0, -.2, 10);
+        Arm.armDown();
 
+        sleep(500);
+
+        Auto.resetEncoder();
+
+        Auto.goToPosition(-11 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        sleep(100);
+
+        Auto.autoBrake(50);
     }
 
     private void initVuforia() {

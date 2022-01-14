@@ -118,7 +118,7 @@ public class Arm {
 
     public static void releaseFreight() throws InterruptedException {
         vibrator.setPosition(VIBRATOR_OPEN);
-        Thread.sleep(200);
+        Thread.sleep(300);
         vibrator.setPosition(VIBRATOR_CLOSED);
     }
 
@@ -156,8 +156,8 @@ public class Arm {
 
     public static void armOutDown(){
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        while(arm.getCurrentPosition() < 900){
-            arm.setTargetPosition(900);
+        while(arm.getCurrentPosition() < 950){
+            arm.setTargetPosition(950);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(ARM_FAST);
         }
@@ -168,7 +168,7 @@ public class Arm {
 
     public static void armOutLong(){
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        while(arm.getCurrentPosition() < 1400){
+        while(arm.getCurrentPosition() < 1300){
             arm.setTargetPosition(1400);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(ARM_FAST);
