@@ -37,7 +37,7 @@ public class Auto {
         double initialDistance = Math.abs(targetYPos - getYPositon());
         double yMultiplier = 1.08;
         double previousDistance = 0;
-        double rrMultipler = 1.5;
+        double rrMultipler = 2.25;
 
         telemetry.addData("Distance To Y", distance);
         telemetry.update();
@@ -205,8 +205,18 @@ public class Auto {
                 rotation = rotation * -1;
             }
 
-            DriveTrain.leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER);
-            DriveTrain.rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER);
+            if(y > 0) {
+                DriveTrain.leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER * 4);
+            }
+            else{
+                DriveTrain.leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER);
+            }
+            if(y < 0) {
+                DriveTrain.rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER * 4);
+            }
+            else{
+                DriveTrain.rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER);
+            }
             DriveTrain.leftBack.setPower((speed * adjustedXHeading + rotation) * Constants.TELEOP_LIMITER);
             DriveTrain.rightBack.setPower((speed * adjustedYHeading - rotation) * Constants.TELEOP_LIMITER);
 

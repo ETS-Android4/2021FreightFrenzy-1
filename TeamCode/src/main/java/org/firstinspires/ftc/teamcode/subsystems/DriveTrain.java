@@ -254,7 +254,7 @@ public class DriveTrain {
     }
 
     public static void driveToLineBlue(double power, String color, Telemetry telemetry) throws InterruptedException {
-        double multiplier = 1.5;
+        double multiplier = 2.25;
         if(color.equals("WHITE")) {
             double minWhite = Double.MAX_VALUE;
             double maxWhite = Double.MIN_VALUE;

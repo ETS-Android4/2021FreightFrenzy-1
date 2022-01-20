@@ -119,7 +119,7 @@ public class BlueTwoCycle extends LinearOpMode {
 
             Arm.armDown();
 
-            Arm.armIn();
+            Arm.armInNoReset();
         } else if(label.equals("LEFT")){
             Arm.armDown();
 
@@ -131,7 +131,7 @@ public class BlueTwoCycle extends LinearOpMode {
 
             sleep(100);
 
-            Arm.armIn();
+            Arm.armInNoReset();
         }
         else if(label.equals("MIDDLE")){
             Arm.armMid();
@@ -146,7 +146,7 @@ public class BlueTwoCycle extends LinearOpMode {
 
             Arm.armDown();
 
-            Arm.armIn();
+            Arm.armInNoReset();
         }
 
 
@@ -154,20 +154,25 @@ public class BlueTwoCycle extends LinearOpMode {
 
         Auto.goToPosition(39 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
 
+        Arm.armIn();
+
         Intake.intake();
 
-        Auto.driveIntakeColor(0, .12, 35, telemetry);
+        while(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+            Auto.driveIntakeColor(0, .15, 20, telemetry);
 
-        sleep(50);
+            telemetry.addData("Gavin", "likes men");
 
-        if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
-            Auto.driveIntakeColor(0, .12, 35, telemetry);
+            sleep(50);
+
+            if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+                DriveTrain.cartesianDriveTimer(0, -.2, 10);
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                break;
+            }
         }
-        else{
-            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-        }
-
-        Arm.armUp();
 
         if(!Arm.ballInGondola()){
             int timerLength = 20;
@@ -175,6 +180,10 @@ public class BlueTwoCycle extends LinearOpMode {
                 timerLength--;
             }
         }
+
+        sleep(500);
+
+        Arm.armUp();
 
         Intake.setBackwards();
 
@@ -187,7 +196,7 @@ public class BlueTwoCycle extends LinearOpMode {
         Auto.goToPosition(-33 * Constants.COUNTS_PER_INCH, -.35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
-        Auto.autoBrake(25);
+        //Auto.autoBrake(25);
 
         Arm.armOutUp();
 
@@ -201,7 +210,7 @@ public class BlueTwoCycle extends LinearOpMode {
 
         Arm.armDown();
 
-        Arm.armIn();
+        Arm.armInNoReset();
 
         Auto.resetEncoder();
 
@@ -209,7 +218,9 @@ public class BlueTwoCycle extends LinearOpMode {
 
         Auto.goToPosition(39 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
 
-        Intake.intake();
+        Arm.armIn();
+
+        /*Intake.intake();
 
         Auto.driveIntakeColor(0, .12, 35, telemetry);
 
@@ -233,6 +244,37 @@ public class BlueTwoCycle extends LinearOpMode {
 
         Intake.setBackwards();
 
+         */
+
+        Intake.intake();
+
+        while(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+            Auto.driveIntakeColor(0, .15, 20, telemetry);
+
+            sleep(50);
+
+            if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+                DriveTrain.cartesianDriveTimer(0, -.2, 10);
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                break;
+            }
+        }
+
+        if(!Arm.ballInGondola()){
+            int timerLength = 20;
+            while(timerLength > 0 && !Arm.ballInGondola()){
+                timerLength--;
+            }
+        }
+
+        sleep(500);
+
+        Arm.armUp();
+
+        Intake.setBackwards();
+
         DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
 
         Auto.resetEncoder();
@@ -242,7 +284,7 @@ public class BlueTwoCycle extends LinearOpMode {
         Auto.goToPosition(-33 * Constants.COUNTS_PER_INCH, -.35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
-        Auto.autoBrake(25);
+        //Auto.autoBrake(25);
 
         Arm.armOutUp();
 
@@ -256,11 +298,99 @@ public class BlueTwoCycle extends LinearOpMode {
 
         Arm.armDown();
 
-        Arm.armIn();
+        Arm.armInNoReset();
 
         Auto.resetEncoder();
 
-        Auto.goToPosition(43 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        DriveTrain.cartesianDriveTimer(.8, 0, 10);
+
+        Auto.goToPosition(39 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+
+        Arm.armIn();
+
+        /*Intake.intake();
+
+        Auto.driveIntakeColor(0, .12, 35, telemetry);
+
+        sleep(50);
+
+        if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+            Auto.driveIntakeColor(0, .12, 35, telemetry);
+        }
+        else{
+            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        }
+
+        Arm.armUp();
+
+        if(!Arm.ballInGondola()){
+            int timerLength = 20;
+            while(timerLength > 0 && !Arm.ballInGondola()){
+                timerLength--;
+            }
+        }
+
+        Intake.setBackwards();
+
+         */
+
+        Intake.intake();
+
+        while(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+            Auto.driveIntakeColor(0, .15, 20, telemetry);
+
+            sleep(50);
+
+            if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+                DriveTrain.cartesianDriveTimer(0, -.2, 10);
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                break;
+            }
+        }
+
+        if(!Arm.ballInGondola()){
+            int timerLength = 20;
+            while(timerLength > 0 && !Arm.ballInGondola()){
+                timerLength--;
+            }
+        }
+
+        sleep(500);
+
+        Arm.armUp();
+
+        Intake.setBackwards();
+
+        DriveTrain.driveToLineBlue(-.2, "WHITE", telemetry);
+
+        Auto.resetEncoder();
+
+        Intake.stop();
+
+        Auto.goToPosition(-33 * Constants.COUNTS_PER_INCH, -.35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        sleep(100);
+
+        //Auto.autoBrake(25);
+
+        Arm.armOutUp();
+
+        sleep(100);
+
+        Arm.releaseFreight();
+
+        DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+
+        sleep(100);
+
+        Arm.armDown();
+
+        Arm.armInNoReset();
+
+        Auto.resetEncoder();
+
+        Auto.goToPosition(55 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
 
         DriveTrain.cartesianDriveTimer(-.4, 0, 30);
     }

@@ -34,7 +34,8 @@ public class Arm {
     private static final double ARM_FAR = 0.4;
 
     //Constants for arm powers
-    private static final double ARM_FAST = .6;
+    private static final double ARM_FAST = .95;
+    private static final double ARM_MED = .8;
     private static final double ARM_SLOW = .2;
     private static String speed = "FAST";
 
@@ -182,7 +183,7 @@ public class Arm {
         while(arm.getCurrentPosition() > 10){
             arm.setTargetPosition(0);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm.setPower(-ARM_FAST);
+            arm.setPower(-ARM_MED);
         }
         arm.setPower(0);
         currentArmState = ARM_STATE.IN;
@@ -190,11 +191,11 @@ public class Arm {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public static void armInTele(){
+    public static void armInNoReset(){
         currentHeightState = HEIGHT_STATE.DOWN;
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(-ARM_FAST);
+        arm.setPower(-ARM_MED);
     }
 
     public static ARM_STATE getArmState(){
@@ -311,16 +312,16 @@ public class Arm {
             stopArm();
         }
         else if(currentArmState == ARM_STATE.OUT_SLOW){
-            slideArm(.2);
+            slideArm(ARM_SLOW);
         }
         else if(currentArmState == ARM_STATE.OUT_FAST){
-            slideArm(.6);
+            slideArm(ARM_FAST);
         }
         else if(currentArmState == ARM_STATE.IN_SLOW){
-            slideArm(-.2);
+            slideArm(-ARM_SLOW);
         }
         else if(currentArmState == ARM_STATE.IN_FAST){
-            slideArm(-.6);
+            slideArm(-ARM_FAST);
         }
         /*else if(currentArmState == ARM_STATE.OUT_UP){
             armOutUp();
