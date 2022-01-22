@@ -107,9 +107,9 @@ public class RedTwoCycle extends LinearOpMode {
         if(label == null || label.equals("RIGHT")) {
             Arm.armUp();
 
-            sleep(750);
+            sleep(900);
 
-            Arm.armOutUp();
+            Arm.armOutUpSlow();
 
             sleep(200);
 
@@ -119,7 +119,7 @@ public class RedTwoCycle extends LinearOpMode {
 
             Arm.armDown();
 
-            Arm.armIn();
+            Arm.armInNoReset();
         }else if(label.equals("LEFT")){
             Arm.armDown();
 
@@ -131,7 +131,7 @@ public class RedTwoCycle extends LinearOpMode {
 
             sleep(100);
 
-            Arm.armIn();
+            Arm.armInNoReset();
         }
         else if(label.equals("MIDDLE")){
             Arm.armMid();
@@ -146,46 +146,49 @@ public class RedTwoCycle extends LinearOpMode {
 
             Arm.armDown();
 
-            Arm.armIn();
+            Arm.armInNoReset();
         }
 
 
-        Auto.goToPosition(-39 * Constants.COUNTS_PER_INCH, -.35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.goToPosition(-43 * Constants.COUNTS_PER_INCH, -.35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+
+        Arm.armIn();
 
         Intake.intake();
 
-        Auto.driveIntakeColor(0, -.12, 35, telemetry);
+        while(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+            Auto.driveIntakeColor(0, -.15, 20, telemetry);
 
-        sleep(50);
+            telemetry.addData("Gavin", "likes men");
 
-        if(!Intake.ballInBackSensor() && !Arm.ballInGondola()){
-            Auto.driveIntakeColor(0, -.12, 35, telemetry);
-        }
-        else{
-            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-        }
+            sleep(50);
 
-        Arm.armUp();
-
-        if(!Arm.ballInGondola()){
-            int timerLength = 20;
-            while(timerLength > 0 && !Arm.ballInGondola()){
-                timerLength--;
+            if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+                DriveTrain.cartesianDriveTimer(0, .2, 25);
+                telemetry.addData("Gavin", "really likes men");
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                break;
             }
         }
 
-        Intake.setBackwards();
+        if(Arm.ballInGondola()){
+            Intake.setBackwards();
+        }
 
         DriveTrain.driveToLineBlue(.2, "WHITE", telemetry);
 
+        Arm.armUp();
+
+        Intake.setBackwards();
+
         Auto.resetEncoder();
 
-        Intake.stop();
-
-        Auto.goToPosition(37 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.goToPosition(39 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
-        Auto.autoBrake(25);
+        //Auto.autoBrake(25);
 
         Arm.armOutUp();
 
@@ -199,48 +202,53 @@ public class RedTwoCycle extends LinearOpMode {
 
         Arm.armDown();
 
-        Arm.armIn();
+        Arm.armInNoReset();
+
+        Intake.stop();
 
         Auto.resetEncoder();
 
         DriveTrain.cartesianDriveTimer(.8, 0, 10);
 
-        Auto.goToPosition(-39 * Constants.COUNTS_PER_INCH, -.35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.goToPosition(-41 * Constants.COUNTS_PER_INCH, -.35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+
+        Arm.armIn();
 
         Intake.intake();
 
-        Auto.driveIntakeColor(0, -.12, 35, telemetry);
+        while(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+            Auto.driveIntakeColor(0, -.15, 20, telemetry);
 
-        sleep(50);
+            telemetry.addData("Gavin", "likes men");
 
-        if(!Intake.ballInBackSensor() && !Arm.ballInGondola()){
-            Auto.driveIntakeColor(0, -.12, 35, telemetry);
-        }
-        else{
-            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-        }
+            sleep(50);
 
-        Arm.armUp();
-
-        if(!Arm.ballInGondola()){
-            int timerLength = 20;
-            while(timerLength > 0 && !Arm.ballInGondola()){
-                timerLength--;
+            if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
+                DriveTrain.cartesianDriveTimer(0, .2, 25);
+                telemetry.addData("Gavin", "really likes men");
+            }
+            else{
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                break;
             }
         }
 
-        Intake.setBackwards();
+        if(Arm.ballInGondola()){
+            Intake.setBackwards();
+        }
 
         DriveTrain.driveToLineBlue(.2, "WHITE", telemetry);
 
+        Arm.armUp();
+
+        Intake.setBackwards();
+
         Auto.resetEncoder();
 
-        Intake.stop();
-
-        Auto.goToPosition(37 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.goToPosition(39 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
-        Auto.autoBrake(25);
+        //Auto.autoBrake(25);
 
         Arm.armOutUp();
 
@@ -254,11 +262,13 @@ public class RedTwoCycle extends LinearOpMode {
 
         Arm.armDown();
 
-        Arm.armIn();
+        Arm.armInNoReset();
+
+        Intake.stop();
 
         Auto.resetEncoder();
 
-        Auto.goToPosition(-44 * Constants.COUNTS_PER_INCH, -.35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.goToPosition(-50 * Constants.COUNTS_PER_INCH, -.35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
 
         DriveTrain.cartesianDriveTimer(-.4, 0, 30);
     }

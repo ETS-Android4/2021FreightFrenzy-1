@@ -205,14 +205,14 @@ public class Auto {
                 rotation = rotation * -1;
             }
 
-            if(y > 0) {
-                DriveTrain.leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER * 4);
+            if(y < 0) {
+                DriveTrain.leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER * 2);
             }
             else{
                 DriveTrain.leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER);
             }
-            if(y < 0) {
-                DriveTrain.rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER * 4);
+            if(y > 0) {
+                DriveTrain.rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER * 2);
             }
             else{
                 DriveTrain.rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER);

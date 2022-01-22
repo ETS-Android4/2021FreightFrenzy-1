@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -36,7 +37,7 @@ public class DriveTrain {
     public static Acceleration gravity;
 
     //Sensors
-    public static ColorSensor floorColorSensor;
+    public static RevColorSensorV3 floorColorSensor;
 
     //LEDS
     public static RevBlinkinLedDriver blinkinLedDriver;
@@ -58,7 +59,7 @@ public class DriveTrain {
 
         imu = hwm.get(BNO055IMU.class, "imu");
 
-        floorColorSensor = hwm.get(ColorSensor.class, "floorColorSensor");
+        floorColorSensor = hwm.get(RevColorSensorV3.class, "floorColorSensor");
 
         blinkinLedDriver = hwm.get(RevBlinkinLedDriver.class, "blinkin");
 
@@ -258,14 +259,14 @@ public class DriveTrain {
         if(color.equals("WHITE")) {
             double minWhite = Double.MAX_VALUE;
             double maxWhite = Double.MIN_VALUE;
-            double exitValue = DriveTrain.floorColorSensor.alpha() + 15;
+            double exitValue = DriveTrain.floorColorSensor.blue() + 11;
             do{
-                if(DriveTrain.floorColorSensor.alpha() > maxWhite){
-                    maxWhite = DriveTrain.floorColorSensor.alpha();
+                if(DriveTrain.floorColorSensor.blue() > maxWhite){
+                    maxWhite = DriveTrain.floorColorSensor.blue();
                 }
 
-                if (DriveTrain.floorColorSensor.alpha() < minWhite){
-                    minWhite = DriveTrain.floorColorSensor.alpha();
+                if (DriveTrain.floorColorSensor.blue() < minWhite){
+                    minWhite = DriveTrain.floorColorSensor.blue();
                 }
 
                 if(power >= 0){
@@ -281,29 +282,14 @@ public class DriveTrain {
                     rightBack.setPower(power * multiplier);
                 }
 
-                telemetry.addData("Max White: ", maxWhite);
-                telemetry.addData("Min White: ", minWhite);
-                telemetry.update();
-            }while(maxWhite < exitValue && DriveTrain.floorColorSensor.alpha() < exitValue);
-            /*
-            while(maxWhite < exitValue && DriveTrain.floorColorSensor.alpha() < exitValue){//480, 680
-                if(DriveTrain.floorColorSensor.alpha() > maxWhite){
-                    maxWhite = DriveTrain.floorColorSensor.alpha();
+                if(Arm.ballInGondola()){
+                    Intake.setBackwards();
                 }
 
-                if (DriveTrain.floorColorSensor.alpha() < minWhite){
-                    minWhite = DriveTrain.floorColorSensor.alpha();
-                }
-                leftFront.setPower(power);
-                rightFront.setPower(power * 1.15);
-                leftBack.setPower(power);
-                rightBack.setPower(power * 1.15);
-//                Intake.releaseAll();
                 telemetry.addData("Max White: ", maxWhite);
                 telemetry.addData("Min White: ", minWhite);
                 telemetry.update();
-            }
-            */
+            }while(maxWhite < exitValue && DriveTrain.floorColorSensor.blue() < exitValue);
 
             leftFront.setPower(0);
             rightFront.setPower(0);

@@ -143,6 +143,18 @@ public class Arm {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public static void armOutUpSlow(){
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while(arm.getCurrentPosition() < 1000){
+            arm.setTargetPosition(1000);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(ARM_MED);
+        }
+        arm.setPower(0);
+        currentArmState = ARM_STATE.OUT;
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     public static void armOutMid(){
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         while(arm.getCurrentPosition() < 950){

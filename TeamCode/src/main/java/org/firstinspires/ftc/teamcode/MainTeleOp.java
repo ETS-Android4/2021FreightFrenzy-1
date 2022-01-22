@@ -47,7 +47,12 @@ public class MainTeleOp extends LinearOpMode{
         while(opModeIsActive()){
 
             /*****DriveTrain*****/
-            DriveTrain.cartesianDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            if(gamepad1.left_trigger > .2){
+                DriveTrain.setRunMode("RUN_WITHOUT_ENCODER");
+                DriveTrain.cartesianDrive((-gamepad1.left_stick_x / 3), (gamepad1.left_stick_y / 3), (gamepad1.right_stick_x / 3));
+            }else {
+                DriveTrain.cartesianDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            }
 
             if(gamepad1.dpad_up){
                 DriveTrain.resetGyro();
@@ -299,14 +304,14 @@ public class MainTeleOp extends LinearOpMode{
             DriveTrain.gyroTele(telemetry);
 
 
-
+            */
             telemetry.addLine()
                     .addData("Floor color", " sensor")
                     .addData("Red", "%.3f", (double) DriveTrain.floorColorSensor.red())
                     .addData("Blue", "%.3f", (double) DriveTrain.floorColorSensor.blue())
                     .addData("Alpha", "%.3f", (double) DriveTrain.floorColorSensor.alpha());
 
-
+            /*
             telemetry.addLine()
                     .addData("Intake front", " sensor")
                     .addData("Red", "%.3f", (double) Intake.intakeFrontSensor.red())
@@ -317,8 +322,9 @@ public class MainTeleOp extends LinearOpMode{
                     .addData("Red", "%.3f", (double) Intake.intakeBackSensor.red())
                     .addData("Blue", "%.3f", (double) Intake.intakeBackSensor.blue())
                     .addData("Alpha", "%.3f", (double) Intake.intakeBackSensor.alpha());
-
+            */
             telemetry.addData("Distance to gondola: ", Arm.armSensor.getDistance(DistanceUnit.CM));
+            /*
             telemetry.addData("Distance to hub: ", Arm.gondolaSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("Dead Wheel pos: ", Auto.getYPositon());
             telemetry.addData("Arm pos: ", Arm.getArmPos());
@@ -331,7 +337,7 @@ public class MainTeleOp extends LinearOpMode{
             
              */
 
-            //telemetry.update();
+            telemetry.update();
         }
     }
 }
