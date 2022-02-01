@@ -159,13 +159,13 @@ public class RedTwoCycle extends LinearOpMode {
         while(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
             Auto.driveIntakeColor(0, -.15, 20, telemetry);
 
-            telemetry.addData("Gavin", "likes men");
+            telemetry.addData("First", "");
 
             sleep(50);
 
             if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
                 DriveTrain.cartesianDriveTimer(0, .2, 25);
-                telemetry.addData("Gavin", "really likes men");
+                telemetry.addData("Second", "");
             }
             else{
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -219,13 +219,13 @@ public class RedTwoCycle extends LinearOpMode {
         while(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
             Auto.driveIntakeColor(0, -.15, 20, telemetry);
 
-            telemetry.addData("Gavin", "likes men");
+            telemetry.addData("First", "");
 
             sleep(50);
 
             if(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
                 DriveTrain.cartesianDriveTimer(0, .2, 25);
-                telemetry.addData("Gavin", "really likes men");
+                telemetry.addData("Second", "");
             }
             else{
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);

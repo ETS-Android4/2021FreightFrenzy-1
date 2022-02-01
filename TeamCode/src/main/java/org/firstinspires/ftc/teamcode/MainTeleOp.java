@@ -289,6 +289,12 @@ public class MainTeleOp extends LinearOpMode{
             if(!manualHeight)
                 Arm.heightUpdatePosition();
 
+            if(gamepad1.a)
+                Arm.vibrator.setPosition(0);
+            if(gamepad1.x)
+                Arm.vibrator.setPosition(.5);
+            if(gamepad1.y)
+                Arm.vibrator.setPosition(1);
             /*
             //DriveTrain.composeTelemetry(telemetry);
             telemetry.addData("Left front encoder: ", DriveTrain.leftFront.getCurrentPosition());

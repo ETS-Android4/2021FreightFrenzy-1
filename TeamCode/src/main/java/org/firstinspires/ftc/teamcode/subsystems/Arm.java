@@ -16,6 +16,7 @@ public class Arm {
     //Servos
     public static Servo heightServo1;
     public static Servo heightServo2;
+    public static Servo heightServo3;
     public static Servo vibrator;
 
     //Sensors
@@ -72,6 +73,7 @@ public class Arm {
 
         heightServo1 = hwm.get(Servo.class, "heightServo1");
         heightServo2 = hwm.get(Servo.class, "heightServo2");
+        heightServo3 = hwm.get(Servo.class, "heightServo3");
         vibrator = hwm.get(Servo.class, "vibrator");
 
         armSensor = hwm.get(DistanceSensor.class, "armSensor");
@@ -80,7 +82,10 @@ public class Arm {
         //Init Servos
         heightServo1.setPosition(ARM_DOWN);
         heightServo2.setPosition(ARM_DOWN);
-        vibrator.setPosition(VIBRATOR_CLOSED);
+        heightServo3.setPosition(ARM_DOWN);
+        //vibrator.setPosition(VIBRATOR_CLOSED);
+        vibrator.setPosition(.5);
+
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -90,31 +95,37 @@ public class Arm {
     public static void moveArm(double newHeight){
         heightServo1.setPosition(newHeight);
         heightServo2.setPosition(newHeight);
+        heightServo3.setPosition(newHeight);
     }
 
     public static void armUp(){
         heightServo1.setPosition(ARM_UP);
         heightServo2.setPosition(ARM_UP);
+        heightServo3.setPosition(ARM_UP);
     }
 
     public static void armDown(){
         heightServo1.setPosition(ARM_DOWN);
         heightServo2.setPosition(ARM_DOWN);
+        heightServo3.setPosition(ARM_DOWN);
     }
 
     public static void armMid(){
         heightServo1.setPosition(ARM_MID);
         heightServo2.setPosition(ARM_MID);
+        heightServo3.setPosition(ARM_MID);
     }
 
     public static void armMax(){
         heightServo1.setPosition(ARM_MAX);
         heightServo2.setPosition(ARM_MAX);
+        heightServo3.setPosition(ARM_MAX);
     }
 
     public static void armFar(){
         heightServo1.setPosition(ARM_FAR);
         heightServo2.setPosition(ARM_FAR);
+        heightServo3.setPosition(ARM_FAR);
     }
 
     public static void releaseFreight() throws InterruptedException {
