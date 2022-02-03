@@ -275,7 +275,7 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             if(gamepad1.dpad_left){
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
             }
             else if(gamepad1.dpad_right){
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -323,14 +323,23 @@ public class MainTeleOp extends LinearOpMode{
                     .addData("Red", "%.3f", (double) Intake.intakeFrontSensor.red())
                     .addData("Blue", "%.3f", (double) Intake.intakeFrontSensor.blue())
                     .addData("Alpha", "%.3f", (double) Intake.intakeFrontSensor.alpha());
+            */
             telemetry.addLine()
                     .addData("Intake back", " sensor")
                     .addData("Red", "%.3f", (double) Intake.intakeBackSensor.red())
                     .addData("Blue", "%.3f", (double) Intake.intakeBackSensor.blue())
                     .addData("Alpha", "%.3f", (double) Intake.intakeBackSensor.alpha());
-            */
-            telemetry.addData("Distance to gondola: ", Arm.armSensor.getDistance(DistanceUnit.CM));
+
+            telemetry.addLine()
+                    .addData("Wall color", " sensor")
+                    .addData("Red", "%.3f", (double) DriveTrain.wallColorSensor.red())
+                    .addData("Blue", "%.3f", (double) DriveTrain.wallColorSensor.blue())
+                    .addData("Alpha", "%.3f", (double) DriveTrain.wallColorSensor.alpha());
+
+            telemetry.addData("Left front: ", DriveTrain.leftFront.getCurrentPosition());
             /*
+            telemetry.addData("Distance to gondola: ", Arm.armSensor.getDistance(DistanceUnit.CM));
+
             telemetry.addData("Distance to hub: ", Arm.gondolaSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("Dead Wheel pos: ", Auto.getYPositon());
             telemetry.addData("Arm pos: ", Arm.getArmPos());

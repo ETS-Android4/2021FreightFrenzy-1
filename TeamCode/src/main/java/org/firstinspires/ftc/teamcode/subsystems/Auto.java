@@ -1,16 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Constants;
 
@@ -30,28 +25,33 @@ public class Auto {
 
         deadWheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        DriveTrain.blinkinLedDriver.close();
     }
 
     public static void goToPosition(double targetYPos, double power, double allowedError, Telemetry telemetry, boolean opMode) throws InterruptedException{
         double distance = Math.abs(targetYPos - getYPositon());
         double initialDistance = Math.abs(targetYPos - getYPositon());
         double yMultiplier = 1.08;
-        double previousDistance = 0;
+        double previousAct;
+        double currentAct;
+        double previousY;
+        double currentY;
+        if(power >= 0) {
+            previousAct = getLeftFront();
+        }
+        else {
+            previousAct = getRightFront();
+        }
+        previousY = getYPositon();
         double rrMultipler = 2.25;
 
         telemetry.addData("Distance To Y", distance);
         telemetry.update();
 
+        int i = 1;
+
         while(opMode && (distance > allowedError)){
-            /*if(runtime > timerLimit){
-                DriveTrain.leftFront.setPower(0);
-                DriveTrain.leftBack.setPower(0);
-                DriveTrain.rightFront.setPower(0);
-                DriveTrain.rightBack.setPower(0);
-                Intake.stop();
-                break;
-            }
-            */
+
             distance = Math.abs(targetYPos - getYPositon());
 
             double robotMovementYComponent = calculateY(0, power);
@@ -60,25 +60,55 @@ public class Auto {
                 yMultiplier += 0.1;
             }
 
-            if(power >= 0){
-                DriveTrain.leftFront.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
-                DriveTrain.rightFront.setPower(robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler);// + feedForward
-                DriveTrain.leftBack.setPower  (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
-                DriveTrain.rightBack.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
+            if(power >= 0) {
+                if (i % 5 == 0) {
+                    currentY = getYPositon();
+                    currentAct = getLeftFront();
+                    double actDif = Math.abs(currentAct - previousAct);
+                    double yDif = Math.abs(currentY - previousY);
+                    telemetry.addData("YDif: ", yDif);
+                    telemetry.addData("ActDif: ", actDif);
+                    telemetry.update();
+                    if (yDif != 0 && actDif != 0) {
+                        if (Math.abs(actDif / yDif) > 1) {
+                            opMode = false;
+                        }
+                    }
+                }
+                DriveTrain.leftFront.setPower(robotMovementYComponent * (distance / initialDistance) * yMultiplier); //+ feedForward
+                DriveTrain.rightFront.setPower(robotMovementYComponent * (distance / initialDistance) * yMultiplier * rrMultipler);// + feedForward
+                DriveTrain.leftBack.setPower(robotMovementYComponent * (distance / initialDistance) * yMultiplier * rrMultipler); //+ feedForward
+                DriveTrain.rightBack.setPower(robotMovementYComponent * (distance / initialDistance) * yMultiplier); //+ feedForward
+                if ((i - 1) % 5 == 0){
+                    previousAct = getLeftFront();
+                    previousY = getYPositon();
+                }
             }
             else if (power < 0){
+                /*
+                currentY = getRightFront();
+                double actDif = Math.abs(currentY - previousY);
+                double yDif = Math.abs(currentAct - previousAct);
+                if(yDif != 0){
+                    if(Math.abs(actDif / yDif) > 10){
+                        opMode = false;
+                    }
+                }
                 DriveTrain.leftFront.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
                 DriveTrain.rightFront.setPower(robotMovementYComponent * (distance/initialDistance) * yMultiplier);// + feedForward
                 DriveTrain.leftBack.setPower  (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
                 DriveTrain.rightBack.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
+                previousY = getRightFront();
+
+                 */
             }
 
 
-            previousDistance = distance;
 
             telemetry.addData("Distance To Y", distance);
+            telemetry.addData("I: ", i);
             telemetry.addData("Left front power: ", DriveTrain.leftFront.getPower());
-            telemetry.update();
+            i++;
         }
 
         DriveTrain.leftFront.setPower(0);
@@ -91,6 +121,10 @@ public class Auto {
     public static int getYPositon(){
         return deadWheel.getCurrentPosition();
     }
+
+    public static int getRightFront(){return DriveTrain.rightFront.getCurrentPosition();}
+
+    public static int getLeftFront(){return DriveTrain.leftFront.getCurrentPosition();}
 
     public void setZeroPower(int sleep) throws InterruptedException{
         DriveTrain.leftFront.setPower(0);
@@ -152,16 +186,7 @@ public class Auto {
         deadWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public static void driveIntakeColor(double x, double y, int timer, Telemetry telemetry) {
-        y = -y;
-        double speed = Math.sqrt(2) * Math.hypot(x, y);
-        double command = Math.atan2(y, -x) + Math.PI/2;
-        double rotation = 0;
-        double startingHeading = DriveTrain.angles.firstAngle;
-        double currentError = 0;
-        double adjustedXHeading = 0;
-        double adjustedYHeading = 0;
-
+    public static void driveIntakeColor(double y, int timer, Telemetry telemetry) {
         double currentColorFront;
         double currentColorBack;
         double exitValueFront;
@@ -184,63 +209,102 @@ public class Auto {
             exitValueBack = Intake.getBackConstant();
             exitValueDistance = Arm.getGondolaConstant();
 
-            DriveTrain.angles = DriveTrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-
-            adjustedXHeading = Math.cos(command + DriveTrain.angles.firstAngle + Math.PI / 4);
-            adjustedYHeading = Math.sin(command + DriveTrain.angles.firstAngle + Math.PI / 4);
-
-            currentError = DriveTrain.angles.firstAngle - startingHeading;
-
-            if (Math.abs(currentError) > (Math.PI / 12)) {
-                rotation = 0.40;
-            } else {
-                if (Math.abs(currentError) > (Math.PI / 180)) {
-                    rotation = Math.abs(currentError / 0.6);
-                } else {
-                    rotation = 0;
-                }
-            }
-
-            if (currentError < 0) {
-                rotation = rotation * -1;
-            }
-
             if(y < 0) {
-                DriveTrain.leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER * 2);
+                DriveTrain.leftFront.setPower(y * Constants.TELEOP_LIMITER * 2);
             }
             else{
-                DriveTrain.leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER);
+                DriveTrain.leftFront.setPower(y * Constants.TELEOP_LIMITER);
             }
             if(y > 0) {
-                DriveTrain.rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER * 2);
+                DriveTrain.rightFront.setPower(y * Constants.TELEOP_LIMITER * 2);
             }
             else{
-                DriveTrain.rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER);
+                DriveTrain.rightFront.setPower(y * Constants.TELEOP_LIMITER);
             }
-            DriveTrain.leftBack.setPower((speed * adjustedXHeading + rotation) * Constants.TELEOP_LIMITER);
-            DriveTrain.rightBack.setPower((speed * adjustedYHeading - rotation) * Constants.TELEOP_LIMITER);
+            DriveTrain.leftBack.setPower(y * Constants.TELEOP_LIMITER);
+            DriveTrain.rightBack.setPower(y * Constants.TELEOP_LIMITER);
 
             currentColorFront = Intake.intakeFrontSensor.red();
             currentColorBack = Intake.intakeBackSensor.red();
             currentDistance = Arm.getArmSensorLength();
 
-            telemetry.addData("Distance: ", Arm.armSensor.getDistance(DistanceUnit.CM));
-            telemetry.update();
-
             timerLength--;
         }
-
-        if(currentColorFront > exitValueFront)
-            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
-        if(currentColorBack > exitValueBack)
-            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
-        if(currentDistance < exitValueDistance)
-            DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
 
         DriveTrain.leftFront.setPower(0);
         DriveTrain.leftBack.setPower(0);
         DriveTrain.rightFront.setPower(0);
         DriveTrain.rightBack.setPower(0);
+    }
+
+    public static void driveWallColor(double power, Telemetry telemetry) throws InterruptedException {
+        double multiplier = 2.25;
+
+        double minWhite = Double.MAX_VALUE;
+        double maxWhite = Double.MIN_VALUE;
+        double exitValue = DriveTrain.wallColorSensor.alpha() + 200;
+
+        do{
+            if(DriveTrain.wallColorSensor.alpha() > maxWhite){
+                maxWhite = DriveTrain.wallColorSensor.alpha();
+            }
+            if (DriveTrain.wallColorSensor.alpha() < minWhite){
+                minWhite = DriveTrain.wallColorSensor.alpha();
+            }
+            if(power >= 0){
+                DriveTrain.leftFront.setPower(power);
+                DriveTrain.rightFront.setPower(power * multiplier);
+                DriveTrain.leftBack.setPower(power * multiplier);
+                DriveTrain.rightBack.setPower(power);
+            }
+            else if (power < 0){
+                DriveTrain.leftFront.setPower(power * multiplier);
+                DriveTrain.rightFront.setPower(power);
+                DriveTrain.leftBack.setPower(power);
+                DriveTrain.rightBack.setPower(power * multiplier);
+            }
+            if(Arm.ballInGondola()){
+                Intake.setBackwards();
+            }
+            telemetry.addData("Max White: ", maxWhite);
+            telemetry.addData("Min White: ", minWhite);
+            telemetry.update();
+        }while(maxWhite < exitValue && DriveTrain.wallColorSensor.alpha() < exitValue);
+
+        minWhite = Double.MAX_VALUE;
+        maxWhite = Double.MIN_VALUE;
+
+        do{
+            if(DriveTrain.wallColorSensor.alpha() > maxWhite){
+                maxWhite = DriveTrain.wallColorSensor.alpha();
+            }
+            if (DriveTrain.wallColorSensor.alpha() < minWhite){
+                minWhite = DriveTrain.wallColorSensor.alpha();
+            }
+            if(power >= 0){
+                DriveTrain.leftFront.setPower(power);
+                DriveTrain.rightFront.setPower(power * multiplier);
+                DriveTrain.leftBack.setPower(power * multiplier);
+                DriveTrain.rightBack.setPower(power);
+            }
+            else if (power < 0){
+                DriveTrain.leftFront.setPower(power * multiplier);
+                DriveTrain.rightFront.setPower(power);
+                DriveTrain.leftBack.setPower(power);
+                DriveTrain.rightBack.setPower(power * multiplier);
+            }
+            if(Arm.ballInGondola()){
+                Intake.setBackwards();
+            }
+            telemetry.addData("Max White: ", maxWhite);
+            telemetry.addData("Min White: ", minWhite);
+            telemetry.update();
+        }while(maxWhite > exitValue && DriveTrain.wallColorSensor.alpha() > exitValue);
+        DriveTrain.leftFront.setPower(0);
+        DriveTrain.rightFront.setPower(0);
+        DriveTrain.leftBack.setPower(0);
+        DriveTrain.rightBack.setPower(0);
+
     }
 
     public static void powerMotors(double power){

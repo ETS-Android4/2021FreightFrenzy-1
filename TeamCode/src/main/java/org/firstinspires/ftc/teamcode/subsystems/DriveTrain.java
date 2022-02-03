@@ -38,6 +38,7 @@ public class DriveTrain {
 
     //Sensors
     public static RevColorSensorV3 floorColorSensor;
+    public static RevColorSensorV3 wallColorSensor;
 
     //LEDS
     public static RevBlinkinLedDriver blinkinLedDriver;
@@ -60,6 +61,7 @@ public class DriveTrain {
         imu = hwm.get(BNO055IMU.class, "imu");
 
         floorColorSensor = hwm.get(RevColorSensorV3.class, "floorColorSensor");
+        wallColorSensor = hwm.get(RevColorSensorV3.class, "wallColorSensor");
 
         blinkinLedDriver = hwm.get(RevBlinkinLedDriver.class, "blinkin");
 

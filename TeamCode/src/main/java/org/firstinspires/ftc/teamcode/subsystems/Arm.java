@@ -83,8 +83,8 @@ public class Arm {
         heightServo1.setPosition(ARM_DOWN);
         heightServo2.setPosition(ARM_DOWN);
         heightServo3.setPosition(ARM_DOWN);
-        //vibrator.setPosition(VIBRATOR_CLOSED);
-        vibrator.setPosition(.5);
+        vibrator.setPosition(VIBRATOR_CLOSED);
+        //vibrator.setPosition(.5);
 
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

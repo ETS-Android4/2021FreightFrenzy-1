@@ -18,7 +18,7 @@ public class Intake {
 
     //Constants for sensors
     private static final double FRONT_SENSOR = 1850;
-    private static final double BACK_SENSOR = 1850;
+    private static final double BACK_SENSOR = 1900;
 
     //Intake State
     private static INTAKE_STATE currentState = INTAKE_STATE.OFF;

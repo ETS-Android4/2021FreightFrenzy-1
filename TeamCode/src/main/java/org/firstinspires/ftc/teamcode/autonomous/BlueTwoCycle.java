@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -156,7 +155,7 @@ public class BlueTwoCycle extends LinearOpMode {
         Intake.intake();
 
         while(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
-            Auto.driveIntakeColor(0, .15, 20, telemetry);
+            Auto.driveIntakeColor(.15, 20, telemetry);
 
             telemetry.addData("Gavin", "likes men");
 
@@ -167,7 +166,6 @@ public class BlueTwoCycle extends LinearOpMode {
                 telemetry.addData("Gavin", "really likes men");
             }
             else{
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 break;
             }
         }
@@ -194,8 +192,6 @@ public class BlueTwoCycle extends LinearOpMode {
         sleep(100);
 
         Arm.releaseFreight();
-
-        DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
 
         sleep(100);
 
@@ -216,7 +212,7 @@ public class BlueTwoCycle extends LinearOpMode {
         Intake.intake();
 
         while(!Intake.ballInFrontSensor() && !Arm.ballInGondola()){
-            Auto.driveIntakeColor(0, .15, 20, telemetry);
+            Auto.driveIntakeColor(.15, 20, telemetry);
 
             telemetry.addData("Gavin", "likes men");
 
@@ -227,7 +223,6 @@ public class BlueTwoCycle extends LinearOpMode {
                 telemetry.addData("Gavin", "really likes men");
             }
             else{
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 break;
             }
         }
@@ -254,8 +249,6 @@ public class BlueTwoCycle extends LinearOpMode {
         sleep(100);
 
         Arm.releaseFreight();
-
-        DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
 
         sleep(100);
 
@@ -287,7 +280,6 @@ public class BlueTwoCycle extends LinearOpMode {
                 telemetry.addData("Gavin", "really likes men");
             }
             else{
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 break;
             }
         }
@@ -314,8 +306,6 @@ public class BlueTwoCycle extends LinearOpMode {
         sleep(100);
 
         Arm.releaseFreight();
-
-        DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
 
         sleep(100);
 

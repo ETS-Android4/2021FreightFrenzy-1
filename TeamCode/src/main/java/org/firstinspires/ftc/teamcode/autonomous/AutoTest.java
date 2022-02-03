@@ -26,9 +26,12 @@ public class AutoTest extends LinearOpMode {
 
         waitForStart();
 
-        Auto.goToPosition(-12 * Constants.COUNTS_PER_INCH, -.15, 250, telemetry, opModeIsActive());
+        Auto.driveWallColor(-.5, telemetry);
 
-        Auto.autoBrake(2500);
+        Auto.autoBrake(50);
 
+        //Auto.goToPosition(10 * Constants.COUNTS_PER_INCH, .15, 250, telemetry, opModeIsActive());
+
+        sleep(1000);
     }
 }

@@ -145,7 +145,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             DriveTrain.cartesianDriveTimer(0, .25, 15);
 
-            Auto.driveIntakeColor(0, .12, 35, telemetry);
+            Auto.driveIntakeColor(.12, 35, telemetry);
 
             sleep(50);
 
@@ -157,7 +157,7 @@ public class TensorFlowAuto extends LinearOpMode {
             }
 
             if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
-                Auto.driveIntakeColor(0, .12, 35, telemetry);
+                Auto.driveIntakeColor(.12, 35, telemetry);
             }
             else{
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -211,7 +211,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             DriveTrain.cartesianDriveTimer(0, .25, 20);
 
-            Auto.driveIntakeColor(0, .12, 35, telemetry);
+            Auto.driveIntakeColor(.12, 35, telemetry);
 
             sleep(50);
 
@@ -223,7 +223,7 @@ public class TensorFlowAuto extends LinearOpMode {
             }
 
             if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
-                Auto.driveIntakeColor(0, .12, 35, telemetry);
+                Auto.driveIntakeColor(.12, 35, telemetry);
             }
             else{
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -302,7 +302,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             DriveTrain.cartesianDriveTimer(0, .25, 15);
 
-            Auto.driveIntakeColor(0, .12, 35, telemetry);
+            Auto.driveIntakeColor(.12, 35, telemetry);
 
             sleep(50);
 
@@ -314,7 +314,7 @@ public class TensorFlowAuto extends LinearOpMode {
             }
 
             if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
-                Auto.driveIntakeColor(0, .12, 35, telemetry);
+                Auto.driveIntakeColor(.12, 35, telemetry);
             }
             else{
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -368,7 +368,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             DriveTrain.cartesianDriveTimer(0, .25, 20);
 
-            Auto.driveIntakeColor(0, .12, 35, telemetry);
+            Auto.driveIntakeColor(.12, 35, telemetry);
 
             sleep(50);
 
@@ -380,7 +380,7 @@ public class TensorFlowAuto extends LinearOpMode {
             }
 
             if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
-                Auto.driveIntakeColor(0, .12, 35, telemetry);
+                Auto.driveIntakeColor(.12, 35, telemetry);
             }
             else{
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -463,7 +463,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             DriveTrain.cartesianDriveTimer(0, .25, 15);
 
-            Auto.driveIntakeColor(0, .12, 35, telemetry);
+            Auto.driveIntakeColor(.12, 35, telemetry);
 
             sleep(50);
 
@@ -475,7 +475,7 @@ public class TensorFlowAuto extends LinearOpMode {
             }
 
             if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
-                Auto.driveIntakeColor(0, .12, 35, telemetry);
+                Auto.driveIntakeColor(.12, 35, telemetry);
             }
             else{
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
@@ -529,7 +529,7 @@ public class TensorFlowAuto extends LinearOpMode {
 
             DriveTrain.cartesianDriveTimer(0, .25, 20);
 
-            Auto.driveIntakeColor(0, .12, 35, telemetry);
+            Auto.driveIntakeColor(.12, 35, telemetry);
 
             sleep(50);
 
@@ -541,7 +541,7 @@ public class TensorFlowAuto extends LinearOpMode {
             }
 
             if(Intake.intakeFrontSensor.red() < 1650 && Arm.getArmSensorLength() > 10){
-                Auto.driveIntakeColor(0, .12, 35, telemetry);
+                Auto.driveIntakeColor(.12, 35, telemetry);
             }
             else{
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
