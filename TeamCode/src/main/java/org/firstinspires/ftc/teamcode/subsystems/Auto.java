@@ -28,7 +28,7 @@ public class Auto {
         DriveTrain.blinkinLedDriver.close();
     }
 
-    public static void goToPosition(double targetYPos, double power, double allowedError, Telemetry telemetry, boolean opMode) throws InterruptedException{
+    /*public static void goToPosition(double targetYPos, double power, double allowedError, Telemetry telemetry, boolean opMode) throws InterruptedException{
         double distance = Math.abs(targetYPos - getYPositon());
         double initialDistance = Math.abs(targetYPos - getYPositon());
         double yMultiplier = 1.08;
@@ -85,7 +85,7 @@ public class Auto {
                 }
             }
             else if (power < 0){
-                /*
+
                 currentY = getRightFront();
                 double actDif = Math.abs(currentY - previousY);
                 double yDif = Math.abs(currentAct - previousAct);
@@ -100,7 +100,7 @@ public class Auto {
                 DriveTrain.rightBack.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
                 previousY = getRightFront();
 
-                 */
+
             }
 
 
@@ -116,6 +116,49 @@ public class Auto {
         DriveTrain.rightFront.setPower(0);
         DriveTrain.rightBack.setPower(0);
         Thread.sleep(250);
+    }
+    */
+
+    public static void goToPosition(double targetYPos, double power, double allowedError, Telemetry telemetry, boolean opMode) throws InterruptedException{
+        double distance = Math.abs(targetYPos - getYPositon());
+        double initialDistance = Math.abs(targetYPos - getYPositon());
+        double yMultiplier = 1.08;
+        double rrMultipler = 2.25;
+
+        telemetry.addData("Distance To Y", distance);
+        telemetry.update();
+
+        while(opMode && (distance > allowedError)){
+            distance = Math.abs(targetYPos - getYPositon());
+
+            double robotMovementYComponent = calculateY(0, power);
+
+            if(distance/initialDistance < .25){
+                yMultiplier += 0.1;
+            }
+
+            if(power >= 0){
+                DriveTrain.leftFront.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
+                DriveTrain.rightFront.setPower(robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler);// + feedForward
+                DriveTrain.leftBack.setPower  (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
+                DriveTrain.rightBack.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
+            }
+            else if (power < 0){
+                DriveTrain.leftFront.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
+                DriveTrain.rightFront.setPower(robotMovementYComponent * (distance/initialDistance) * yMultiplier);// + feedForward
+                DriveTrain.leftBack.setPower  (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
+                DriveTrain.rightBack.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
+            }
+
+            telemetry.addData("Distance To Y", distance);
+            telemetry.addData("Left front power: ", DriveTrain.leftFront.getPower());
+            telemetry.update();
+        }
+
+        DriveTrain.leftFront.setPower(0);
+        DriveTrain.leftBack.setPower(0);
+        DriveTrain.rightFront.setPower(0);
+        DriveTrain.rightBack.setPower(0);
     }
 
     public static int getYPositon(){
@@ -159,18 +202,25 @@ public class Auto {
         DriveTrain.leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         DriveTrain.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         DriveTrain.rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        double power = .8;
+        double multiplier = 0.25;
         while(timerLength > 0) {
             DriveTrain.leftFront.setTargetPosition(0);
             DriveTrain.leftBack.setTargetPosition(0);
             DriveTrain.rightFront.setTargetPosition(0);
             DriveTrain.rightBack.setTargetPosition(0);
             DriveTrain.setRunMode("RUN_TO_POSITION");
-            DriveTrain.leftFront.setPower(0.8);
-            DriveTrain.leftBack.setPower(0.8);
-            DriveTrain.rightFront.setPower(0.8);
-            DriveTrain.rightBack.setPower(0.8);
+
+
+            DriveTrain.leftFront.setPower(power);
+            DriveTrain.rightFront.setPower(power * (1 + multiplier));
+            DriveTrain.leftBack.setPower(power);
+            DriveTrain.rightBack.setPower(power * (1 - multiplier));
+
+
             timerLength--;
         }
+        /*
         DriveTrain.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveTrain.leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         DriveTrain.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -179,6 +229,8 @@ public class Auto {
         DriveTrain.leftBack.setPower(0);
         DriveTrain.rightFront.setPower(0);
         DriveTrain.rightBack.setPower(0);
+
+         */
     }
 
     public static void resetEncoder(){

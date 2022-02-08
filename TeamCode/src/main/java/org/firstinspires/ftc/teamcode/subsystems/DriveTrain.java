@@ -488,6 +488,12 @@ public class DriveTrain {
         rightBack.setPower(0);
     }
 
+    public static void customDriveNoTimer(double lf, double lb, double rf, double rb){
+        leftFront.setPower(lf * Constants.TELEOP_LIMITER);
+        leftBack.setPower(lb * Constants.TELEOP_LIMITER);
+        rightFront.setPower(rf * Constants.TELEOP_LIMITER);
+        rightBack.setPower(rb * Constants.TELEOP_LIMITER);
+    }
 
     public static void setRunMode(String input) {
         if (input.equals("STOP_AND_RESET_ENCODER")) {

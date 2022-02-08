@@ -24,14 +24,31 @@ public class AutoTest extends LinearOpMode {
         Carousel.initCarousel(hardwareMap);
         Auto.initAuto(hardwareMap);
 
+        Arm.armUp();
+
         waitForStart();
 
-        Auto.driveWallColor(-.5, telemetry);
+        Arm.armOutUpFast();
 
-        Auto.autoBrake(50);
+        Auto.driveWallColor(-.2, telemetry);
 
-        //Auto.goToPosition(10 * Constants.COUNTS_PER_INCH, .15, 250, telemetry, opModeIsActive());
+        Auto.resetEncoder();
 
-        sleep(1000);
+        Auto.goToPosition(-12 * Constants.COUNTS_PER_INCH, -.1, Constants.COUNTS_PER_INCH * 2, telemetry, opModeIsActive());
+
+        //Auto.autoBrake(10);
+
+        Arm.releaseFreight();
+
+        Arm.armInNoReset();
+
+        Auto.resetEncoder();
+
+        Auto.goToPosition(39 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+
+        telemetry.addData("Encoder: ", Auto.getYPositon());
+        telemetry.update();
+
+        sleep(5000);
     }
 }

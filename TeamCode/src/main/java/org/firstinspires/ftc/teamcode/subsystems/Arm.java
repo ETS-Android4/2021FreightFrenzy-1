@@ -18,10 +18,10 @@ public class Arm {
     public static Servo heightServo2;
     public static Servo heightServo3;
     public static Servo vibrator;
+    public static Servo cappingArm;
 
     //Sensors
     public static DistanceSensor armSensor;
-    public static DistanceSensor gondolaSensor;
 
     //Constants for flicker servo
     private static final double VIBRATOR_CLOSED = 0.14;
@@ -41,7 +41,7 @@ public class Arm {
     private static String speed = "FAST";
 
     //Constants for sensors
-    private static final double GONDOLA_SENSOR = 12;
+    private static final double GONDOLA_SENSOR = 8;
 
     //States
     private static ARM_STATE currentArmState = ARM_STATE.IN;
@@ -75,9 +75,9 @@ public class Arm {
         heightServo2 = hwm.get(Servo.class, "heightServo2");
         heightServo3 = hwm.get(Servo.class, "heightServo3");
         vibrator = hwm.get(Servo.class, "vibrator");
+        cappingArm = hwm.get(Servo.class, "cappingArm");
 
         armSensor = hwm.get(DistanceSensor.class, "armSensor");
-        gondolaSensor = hwm.get(DistanceSensor.class, "gondolaSensor");
 
         //Init Servos
         heightServo1.setPosition(ARM_DOWN);
@@ -144,8 +144,8 @@ public class Arm {
 
     public static void armOutUp(){
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        while(arm.getCurrentPosition() < 1000){
-            arm.setTargetPosition(1000);
+        while(arm.getCurrentPosition() < 1050){
+            arm.setTargetPosition(1050);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(ARM_FAST);
         }
@@ -219,6 +219,13 @@ public class Arm {
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(-ARM_MED);
+    }
+
+    public static void armOutUpFast(){
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setTargetPosition(1000);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(ARM_FAST);
     }
 
     public static ARM_STATE getArmState(){

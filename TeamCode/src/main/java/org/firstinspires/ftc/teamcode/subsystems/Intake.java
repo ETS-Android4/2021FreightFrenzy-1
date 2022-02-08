@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
     //Declare motors
@@ -13,12 +15,17 @@ public class Intake {
     public static ColorSensor intakeFrontSensor;
     public static ColorSensor intakeBackSensor;
 
+    //Declare servos
+    public static Servo frontServo;
+    public static Servo backServo;
+
     //Intake constants
-    private static final double INTAKE_POWER = 0.95;
+    private static final double INTAKE_FORWARD = 0.95;
+    private static final double INTAKE_BACKWARDS = .65;
 
     //Constants for sensors
-    private static final double FRONT_SENSOR = 1850;
-    private static final double BACK_SENSOR = 1900;
+    private static final double FRONT_SENSOR = 1950;
+    private static final double BACK_SENSOR = 1575;
 
     //Intake State
     private static INTAKE_STATE currentState = INTAKE_STATE.OFF;
@@ -37,24 +44,31 @@ public class Intake {
         intakeFront = hwm.get(DcMotor.class, "intakeFront");
         intakeBack = hwm.get(DcMotor.class, "intakeBack");
 
+        frontServo = hwm.get(Servo.class, "frontServo");
+        backServo = hwm.get(Servo.class, "backServo");
+
         intakeFrontSensor = hwm.get(ColorSensor.class, "intakeFrontSensor");
         intakeBackSensor = hwm.get(ColorSensor.class, "intakeBackSensor");
 
         intakeFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        intakeBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
     }
 
     //Intake forwards
     public static void intake() throws InterruptedException {
-        intakeFront.setPower(INTAKE_POWER);
-        intakeBack.setPower(INTAKE_POWER);
+        if(Intake.frontServo.getPosition() < .5)
+            intakeFront.setPower(INTAKE_FORWARD);
+        if(Intake.backServo.getPosition()  > .5)
+            intakeBack.setPower(INTAKE_FORWARD);
     }
 
     //Intake backwards
     public static void setBackwards(){
-        intakeFront.setPower(-INTAKE_POWER);
-        intakeBack.setPower(-INTAKE_POWER);
+        intakeFront.setPower(-INTAKE_BACKWARDS);
+        intakeBack.setPower(-INTAKE_BACKWARDS);
     }
 
     //Stop the intake
