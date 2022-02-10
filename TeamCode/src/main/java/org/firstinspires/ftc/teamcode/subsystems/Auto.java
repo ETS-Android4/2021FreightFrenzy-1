@@ -296,7 +296,11 @@ public class Auto {
         double maxWhite = Double.MIN_VALUE;
         double exitValue = DriveTrain.wallColorSensor.alpha() + 200;
 
+        int i = 0;
         do{
+            i++;
+            if(i == 50)
+                Intake.setBackwards();
             if(DriveTrain.wallColorSensor.alpha() > maxWhite){
                 maxWhite = DriveTrain.wallColorSensor.alpha();
             }
@@ -326,7 +330,11 @@ public class Auto {
         minWhite = Double.MAX_VALUE;
         maxWhite = Double.MIN_VALUE;
 
+        Intake.setBackwards();
+
         do{
+            if(Arm.ballInGondola())
+                Arm.armOutUpFast();
             if(DriveTrain.wallColorSensor.alpha() > maxWhite){
                 maxWhite = DriveTrain.wallColorSensor.alpha();
             }

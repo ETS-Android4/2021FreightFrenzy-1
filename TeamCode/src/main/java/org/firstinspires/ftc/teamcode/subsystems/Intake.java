@@ -24,8 +24,14 @@ public class Intake {
     private static final double INTAKE_BACKWARDS = .65;
 
     //Constants for sensors
-    private static final double FRONT_SENSOR = 1950;
-    private static final double BACK_SENSOR = 1575;
+    private static double FRONT_SENSOR = 1950;
+    private static double BACK_SENSOR = 1575;
+
+    //Servo Constants
+    private static final double FRONT_UP = .9;
+    private static final double FRONT_DOWN = .03;
+    private static final double BACK_UP = .1;
+    private static final double BACK_DOWN = .64;
 
     //Intake State
     private static INTAKE_STATE currentState = INTAKE_STATE.OFF;
@@ -55,6 +61,11 @@ public class Intake {
 
         intakeBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        frontIntakeUp();
+        backIntakeUp();
+
+        Intake.setFrontConstant();
+        Intake.setBackConstant();
     }
 
     //Intake forwards
@@ -75,6 +86,21 @@ public class Intake {
     public static void stop(){
         intakeFront.setPower(0);
         intakeBack.setPower(0);
+    }
+
+    public static void setFrontConstant(){
+        int sum = 0;
+        for(int i = 0; i < 20; i++){
+            sum += intakeFrontSensor.red();
+        }
+        FRONT_SENSOR = (sum / 20) + 50;
+    }
+    public static void setBackConstant(){
+        int sum = 0;
+        for(int i = 0; i < 20; i++){
+            sum += intakeBackSensor.red();
+        }
+        BACK_SENSOR = (sum / 20) + 50;
     }
 
     public static void changeIntakeBackwards(){
@@ -102,6 +128,22 @@ public class Intake {
     public static double getFrontConstant(){return FRONT_SENSOR;}
 
     public static double getBackConstant(){return BACK_SENSOR;}
+
+    public static void frontIntakeUp(){
+        frontServo.setPosition(FRONT_UP);
+    }
+
+    public static void frontIntakeDown(){
+        frontServo.setPosition(FRONT_DOWN);
+    }
+
+    public static void backIntakeUp(){
+        backServo.setPosition(BACK_UP);
+    }
+
+    public static void backIntakeDown(){
+        backServo.setPosition(BACK_DOWN);
+    }
 
     //Changes the state of the intake based on the input
     public static void intakeChangeState(String direction){

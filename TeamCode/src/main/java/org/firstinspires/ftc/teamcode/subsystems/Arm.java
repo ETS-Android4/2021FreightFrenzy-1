@@ -80,12 +80,10 @@ public class Arm {
         armSensor = hwm.get(DistanceSensor.class, "armSensor");
 
         //Init Servos
-        heightServo1.setPosition(ARM_DOWN);
-        heightServo2.setPosition(ARM_DOWN);
-        heightServo3.setPosition(ARM_DOWN);
+        //heightServo1.setPosition(ARM_DOWN);
+        //heightServo2.setPosition(ARM_DOWN);
+        //heightServo3.setPosition(ARM_DOWN);
         vibrator.setPosition(VIBRATOR_CLOSED);
-        //vibrator.setPosition(.5);
-
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -24,10 +24,9 @@ public class MainTeleOp extends LinearOpMode{
     private boolean armFlag = false;
     private boolean heightFlag = false;
     private boolean manualHeight = false;
-    private boolean manualHeightFlag = false;
     private boolean ballInGondola = false;
     private boolean ballInIntake = false;
-    private boolean vibrated = false;
+    private boolean vibrated = true;
     private boolean armInAuto = false;
     private boolean armOutAuto = false;
     private boolean backwardsFlag = false;
@@ -46,6 +45,9 @@ public class MainTeleOp extends LinearOpMode{
         Auto.initAuto(hardwareMap);
 
         waitForStart();
+
+        Intake.setFrontConstant();
+        Intake.setBackConstant();
 
         while(opModeIsActive()){
 
@@ -83,12 +85,13 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             //Check for something in intake, change LEDs
-            if((Intake.ballInFrontSensor() || Intake.ballInBackSensor()) && !ballInGondola && !ballInIntake){
+            if((Intake.ballInFrontSensor() || Intake.ballInBackSensor()) && !ballInGondola && !ballInIntake && vibrated){
                 ballInIntake = true;
                 intakeTimer = 0;
                 backwardsFlag = false;
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
                 robotBackwards = true;
+                vibrated = false;
                 if(Intake.ballInFrontSensor()) {
                     frontIntake = true;
                     DriveTrain.customDriveNoTimer(-.8, -.8, -.8, -.8);
@@ -97,8 +100,8 @@ public class MainTeleOp extends LinearOpMode{
                     frontIntake = false;
                     DriveTrain.customDriveNoTimer(.8, .8, .8, .8);
                 }
-                Intake.frontServo.setPosition(.9);
-                Intake.backServo.setPosition(.1);
+                Intake.frontIntakeUp();
+                Intake.backIntakeUp();
             }
 
             //Start timer to intake backwards
@@ -209,7 +212,7 @@ public class MainTeleOp extends LinearOpMode{
 
             if(Arm.getArmPos() > 990 && armOutAuto){
                 Arm.arm.setPower(0);
-                Arm.changeArmIn();
+                Arm.changeArmOut();
                 armOutAuto = false;
             }
 
@@ -221,11 +224,12 @@ public class MainTeleOp extends LinearOpMode{
                 ballInIntake = false;
                 intakeTimer = 0;
                 Intake.changeIntakeOff();
+                vibrated = true;
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
                 if(frontIntake)
-                    Intake.frontServo.setPosition(.03); //Down
+                    Intake.frontIntakeDown();
                 else
-                    Intake.backServo.setPosition(.64); //Down
+                    Intake.backIntakeDown();
             }
             if(!Arm.ballInGondola()){
                 ballInGondola = false;
@@ -246,46 +250,12 @@ public class MainTeleOp extends LinearOpMode{
                 heightFlag = true;
                 manualHeight = false;
                 Arm.heightChangeState("DOWN");
-            } /*else if(gamepad2.left_stick_y > .3 && !heightFlag){
-                heightFlag = true;
-                manualHeight = false;
-                Arm.heightChangeState("MAX");
             }
-            */
 
             //Reset height flag
             if(heightFlag && !gamepad2.dpad_up && !gamepad2.dpad_right && !gamepad2.dpad_down/*  && gamepad2.left_stick_y <= .3 && !gamepad2.dpad_left*/){
                 heightFlag = false;
             }
-
-            /*if(gamepad2.right_stick_y < -.2 && !manualHeightFlag){
-                if(Arm.heightServo1.getPosition() >= .2) {
-                    manualHeightFlag = true;
-                    manualHeight = true;
-                    Arm.moveArm(Arm.heightServo1.getPosition() - .01);
-                }
-            } else if(gamepad2.right_stick_y > .2 && !manualHeightFlag){
-                if(Arm.heightServo1.getPosition() <= .8) {
-                    manualHeightFlag = true;
-                    manualHeight = true;
-                    Arm.moveArm(Arm.heightServo1.getPosition() + .01);
-                }
-            }
-
-            if(gamepad2.right_stick_y <= .2 && gamepad2.right_stick_y >= -.2){
-                manualHeightFlag = false;
-            }
-
-             */
-
-            /*if(gamepad1.dpad_left){
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-            }
-            else if(gamepad1.dpad_right){
-                DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-            }
-
-             */
 
             //Update States
             Carousel.carouselUpdatePosition(gamepad1.right_trigger);
@@ -297,18 +267,18 @@ public class MainTeleOp extends LinearOpMode{
 
             if(gamepad2.right_stick_y < -.2 && !backIntakeFlag){
                 backIntakeFlag = true;
-                Intake.backServo.setPosition(.1); //Up
+                Intake.backIntakeUp();
             } else if(gamepad2.right_stick_y > .2 && !backIntakeFlag){
                 backIntakeFlag = true;
-                Intake.backServo.setPosition(.64); //Down
+                Intake.backIntakeDown();
             }
 
             if(gamepad2.left_stick_y < -.2 && !frontIntakeFlag){
                 frontIntakeFlag = true;
-                Intake.frontServo.setPosition(.9); //Up
+                Intake.frontIntakeUp();
             } else if(gamepad2.left_stick_y > .2 && !frontIntakeFlag){
                 frontIntakeFlag = true;
-                Intake.frontServo.setPosition(.03); //Down
+                Intake.frontIntakeDown();
             }
 
             if(gamepad2.right_stick_y <= .2 && gamepad2.right_stick_y >= -.2){
@@ -325,6 +295,21 @@ public class MainTeleOp extends LinearOpMode{
             else if(gamepad1.dpad_left)
                 Arm.cappingArm.setPosition(.1);
 
+            if(gamepad1.a){
+                if(armInAuto){
+                    Arm.arm.setPower(0);
+                    Arm.changeArmIn();
+                    Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    armInAuto = false;
+                }
+                else if(armOutAuto) {
+                    Arm.arm.setPower(0);
+                    Arm.changeArmIn();
+                    armOutAuto = false;
+                }
+            }
+
             /*if(gamepad1.a)
                 Arm.vibrator.setPosition(0);
             if(gamepad1.x)
@@ -332,8 +317,6 @@ public class MainTeleOp extends LinearOpMode{
             if(gamepad1.y)
                 Arm.vibrator.setPosition(.6);
 
-             */
-            /*
             //DriveTrain.composeTelemetry(telemetry);
             telemetry.addData("Left front encoder: ", DriveTrain.leftFront.getCurrentPosition());
             telemetry.addData("Left back encoder: ", DriveTrain.leftBack.getCurrentPosition());
@@ -394,7 +377,8 @@ public class MainTeleOp extends LinearOpMode{
             telemetry.update();
             
              */
-
+            telemetry.addData("Front constant: ", Intake.getFrontConstant());
+            telemetry.addData("Back constant: ", Intake.getBackConstant());
             telemetry.update();
         }
     }
