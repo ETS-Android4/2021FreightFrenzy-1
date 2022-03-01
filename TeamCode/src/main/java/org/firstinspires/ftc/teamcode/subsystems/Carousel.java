@@ -22,7 +22,7 @@ public class Carousel {
         OFF;
     }
 
-    private static String color = "RED";
+    private static String color = "BLUE";
 
     //Constructor
     public Carousel(){};

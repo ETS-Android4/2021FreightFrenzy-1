@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 
 import java.util.List;
 
@@ -27,8 +30,12 @@ public class BlueMainAuto extends LinearOpMode {
     private TFObjectDetector tfod;
     public String label;
     public boolean marker;
+    public boolean arm;
+    public boolean block;
 
     private static List<Recognition> tfodRecogntions;
+
+    public static ElapsedTime timeyBoi = new ElapsedTime();
 
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
@@ -103,6 +110,8 @@ public class BlueMainAuto extends LinearOpMode {
 
         waitForStart();
 
+        super.resetStartTime();
+
         Intake.frontIntakeDown();
 
         if(label == null || label.equals("RIGHT")) {
@@ -114,7 +123,7 @@ public class BlueMainAuto extends LinearOpMode {
 
             sleep(200);
 
-            Arm.releaseFreight();
+            Arm.releaseFreightOpen();
 
             sleep(100);
 
@@ -128,7 +137,7 @@ public class BlueMainAuto extends LinearOpMode {
 
             Arm.armOutDown();
 
-            Arm.releaseFreight();
+            Arm.releaseFreightOpen();
 
             sleep(100);
 
@@ -141,7 +150,7 @@ public class BlueMainAuto extends LinearOpMode {
 
             Arm.armOutMid();
 
-            Arm.releaseFreight();
+            Arm.releaseFreightOpen();
 
             sleep(100);
 
@@ -151,39 +160,117 @@ public class BlueMainAuto extends LinearOpMode {
         }
         Arm.armUp();
 
-        Arm.slideArm(-.8);
+        for(int i = 0; i < 5; i ++){
+            if(super.getRuntime() <= 22){
+                arm = false;
+                block = false;
+                Auto.resetEncoder();
 
-        Intake.intake();
+                Intake.frontIntakeDown();
 
-        Auto.goToPosition(39 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+                Intake.intake();
 
-        Arm.stopArm();
+                if(i == 0){
+                    Auto.goToPositionIntake(45 * Constants.COUNTS_PER_INCH, .4, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+                }
+                else{
+                    Auto.goToPositionIntake((51 + (i * 2)) * Constants.COUNTS_PER_INCH, .4, 3 * Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+                }
+                Arm.releaseFreightClose();
 
-        Auto.driveIntakeColor(.2, 90, telemetry);
+                Intake.setFrontConstant();
+                Intake.setBackConstant();
 
-        Intake.frontIntakeUp();
+                while(!block){
+                    Auto.driveIntakeColor(.25, 30, telemetry);
+                    if(Intake.ballInFrontSensor())
+                        block = true;
+                    if(!block){
+                        Auto.rotateColor(.25, 20, telemetry);
+                        if(Intake.ballInFrontSensor())
+                            block = true;
+                    }
+                    if(!block)
+                        DriveTrain.cartesianDriveTimer(.8, -.25, 25);
+                }
 
-        Auto.driveWallColor(-.2, telemetry);
+                if(super.getRuntime() <= 26){
+                    Intake.frontIntakeUp();
 
-        if(Arm.ballInGondola())
-            Arm.armOutUpFast();
+                    Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    Arm.slideArm(-.25);
+                    Intake.intakeBack.setPower(.65);
 
-        Auto.resetEncoder();
+                    Auto.driveWallColor(-.18, telemetry);
 
-        Auto.goToPosition(-12 * Constants.COUNTS_PER_INCH, -.1, Constants.COUNTS_PER_INCH * 2, telemetry, opModeIsActive());
+                    Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        while(!Arm.ballInGondola());
+                    if(Arm.ballInGondola()) {
+                        arm = true;
+                        Arm.armOutUpFast();
+                    }
 
-        Arm.armOutUpFast();
-        //Auto.autoBrake(10);
+                    Auto.resetEncoder();
 
-        Arm.releaseFreight();
+                    Auto.goToPosition(-5 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH * 3, telemetry, opModeIsActive());
 
-        Arm.armInNoReset();
+                    if(!Arm.ballInGondola() && !arm) {
+                        while (!Arm.ballInGondola()){
+                            if(super.getRuntime() <= 28){}
+                            else{
+                                Arm.releaseFreightClose();
+                                sleep(300);
+                                break;
+                            }
+                        }
+                        if(super.getRuntime() <= 28){
+                            Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                            Arm.armOutUp();
+                        }
+                        else{
+                            Arm.releaseFreightClose();
+                            sleep(300);
+                            break;
+                        }
+                    }
+                    else if(Arm.ballInGondola() && !arm){
+                        Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        Arm.armOutUp();
+                    }
+                    else if(arm){
+                        while (Arm.getArmPos() < 1050);
+                    }
 
-        Auto.resetEncoder();
+                    Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    Arm.stopArm();
 
-        Intake.intake();
+                    Arm.releaseFreightOpen();
+
+                    sleep(400);
+
+                    Arm.armInNoReset();
+                }
+                else{
+                    Arm.releaseFreightClose();
+                    sleep(300);
+                    stop();
+                }
+            }
+            else{
+                Arm.releaseFreightClose();
+                sleep(300);
+                break;
+            }
+        }
+
+        Auto.goToPosition(49 * Constants.COUNTS_PER_INCH, .4, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+
+        Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Arm.slideArm(-.45);
+
+        sleep(1000);
+
+        Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     private void initVuforia() {

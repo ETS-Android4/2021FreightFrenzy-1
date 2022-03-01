@@ -101,7 +101,7 @@ public class DriveTrain {
         blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);//AQUA
     }
 
-    public static void cartesianDrive(double x, double y, double z){
+    public static void cartesianDrive(double x, double y, double z, double adjust){
         double speed = Math.sqrt(2) * Math.hypot(x, y);
         double command = Math.atan2(y, -x) + Math.PI/2;
         double rotation = z;
@@ -127,8 +127,8 @@ public class DriveTrain {
         }
 
         angles = DriveTrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-        double adjustedXHeading = Math.cos(command + angles.firstAngle + Math.PI/4);
-        double adjustedYHeading = Math.sin(command + angles.firstAngle + Math.PI/4);
+        double adjustedXHeading = Math.cos(command + (angles.firstAngle + adjust) + Math.PI/4);
+        double adjustedYHeading = Math.sin(command + (angles.firstAngle + adjust) + Math.PI/4);
 
         leftFront.setPower((speed * adjustedYHeading + rotation) * Constants.TELEOP_LIMITER);
         rightFront.setPower((speed * adjustedXHeading - rotation) * Constants.TELEOP_LIMITER);
@@ -205,10 +205,10 @@ public class DriveTrain {
             }
             driveTrainError = angles.firstAngle - finalAngle;
             if(driveTrainError > 0){
-                cartesianDrive(0, 0, driveTrainPower);
+                cartesianDrive(0, 0, driveTrainPower, 0);
             }
             else if(driveTrainError < 0){
-                cartesianDrive(0, 0, -driveTrainPower);
+                cartesianDrive(0, 0, -driveTrainPower, 0);
             }
             turnTimer--;
         }
@@ -242,10 +242,10 @@ public class DriveTrain {
             }
             driveTrainError = angles.firstAngle - finalAngle;
             if(driveTrainError > 0){
-                cartesianDrive(0, 0, driveTrainPower);
+                cartesianDrive(0, 0, driveTrainPower, 0);
             }
             else if(driveTrainError < 0){
-                cartesianDrive(0, 0, -driveTrainPower);
+                cartesianDrive(0, 0, -driveTrainPower, 0);
             }
             currentDistance = Arm.armSensor.getDistance(DistanceUnit.CM);
             turnTimer--;
@@ -284,9 +284,10 @@ public class DriveTrain {
                     rightBack.setPower(power * multiplier);
                 }
 
-                if(Arm.ballInGondola()){
+                /*if(Arm.ballInGondola()){
                     Intake.setBackwards();
                 }
+                 */
 
                 telemetry.addData("Max White: ", maxWhite);
                 telemetry.addData("Min White: ", minWhite);

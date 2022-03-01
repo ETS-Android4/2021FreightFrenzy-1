@@ -11,10 +11,13 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name= "AutoTest", group= "Autonomous")
 
 public class AutoTest extends LinearOpMode {
+
+    public static ElapsedTime timeyBoi = new ElapsedTime();
 
     public void runOpMode() throws InterruptedException {
 
@@ -24,31 +27,17 @@ public class AutoTest extends LinearOpMode {
         Carousel.initCarousel(hardwareMap);
         Auto.initAuto(hardwareMap);
 
-        Arm.armUp();
 
         waitForStart();
 
-        Arm.armOutUpFast();
+        super.resetStartTime();
 
-        Auto.driveWallColor(-.2, telemetry);
+        while(super.getRuntime() < 25){
+            telemetry.addData("Run time: ", super.getRuntime());
+            telemetry.update();
+        }
 
-        Auto.resetEncoder();
+        stop();
 
-        Auto.goToPosition(-12 * Constants.COUNTS_PER_INCH, -.1, Constants.COUNTS_PER_INCH * 2, telemetry, opModeIsActive());
-
-        //Auto.autoBrake(10);
-
-        Arm.releaseFreight();
-
-        Arm.armInNoReset();
-
-        Auto.resetEncoder();
-
-        Auto.goToPosition(39 * Constants.COUNTS_PER_INCH, .35, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
-
-        telemetry.addData("Encoder: ", Auto.getYPositon());
-        telemetry.update();
-
-        sleep(5000);
     }
 }

@@ -20,7 +20,7 @@ public class BellsTeleop extends LinearOpMode{
         double power = 0;
         while(opModeIsActive()){
 
-            DriveTrain.cartesianDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            DriveTrain.cartesianDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, 0);
 
             if(gamepad1.dpad_up){
                 DriveTrain.resetGyro();

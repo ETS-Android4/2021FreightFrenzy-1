@@ -122,73 +122,74 @@ public class BlueDuckCycle extends LinearOpMode {
 
         Auto.powerMotors(0);
 
-        DriveTrain.customDrive(-.4, 0, .4, 0, 20000);
+        DriveTrain.cartesianDriveTimer(-.4, 0, 25);
+
+        DriveTrain.customDrive(-.4, -.4, .4, .4, 12500);
 
         DriveTrain.resetGyro();
 
-        Auto.goToPosition(37 * Constants.COUNTS_PER_INCH, .25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        DriveTrain.cartesianDriveTimer(.8, 0, 30);
+
+        DriveTrain.driveToLineBlue(-.1,"WHITE", telemetry);
+
+        Auto.resetEncoder();
+
+        DriveTrain.setRunMode("RUN_USING_ENCODER");
+
+        Auto.goToPosition(5 * Constants.COUNTS_PER_INCH, .15, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
         Auto.autoBrake(50);
 
         if(label == null || label.equals("RIGHT")) {
-            Arm.armUp();
+            Arm.armFar();
 
-            sleep(1000);
+            sleep(750);
 
-            Arm.armOutUp();
+            Arm.armOutLong();
 
-            sleep(200);
-
-            Arm.releaseFreight();
-
-            sleep(100);
-
-            Arm.armDown();
-
-            Arm.armIn();
-        }else if(label.equals("LEFT")){
-            Arm.armDown();
-
-            Arm.armOutDown();
-
-            sleep(200);
+            Arm.arm.setPower(.3);
 
             Arm.releaseFreight();
 
+            Arm.arm.setPower(0);
+
+            Arm.armInNoReset();
+        } else if(label.equals("LEFT")){
+            Arm.armDown();
+
             sleep(100);
 
-            Arm.armIn();
+            Arm.armOutLong();
+
+            Arm.arm.setPower(.3);
+
+            Arm.releaseFreight();
+
+            Arm.arm.setPower(0);
+
+            Arm.armInNoReset();
         }
         else if(label.equals("MIDDLE")){
             Arm.armMid();
 
-            sleep(200);
+            sleep(250);
 
-            Arm.armOutMid();
+            Arm.armOutLong();
+
+            Arm.arm.setPower(.3);
 
             Arm.releaseFreight();
 
-            sleep(100);
+            Arm.arm.setPower(0);
 
-            Arm.armDown();
-
-            Arm.armIn();
+            Arm.armInNoReset();
         }
-
+        DriveTrain.setRunMode("RUN_USING_ENCODER");
 
         Auto.resetEncoder();
 
-        Auto.goToPosition(-41 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
-
-        Auto.autoBrake(25);
-
-        DriveTrain.driveToLineBlue(-.4, -.2, "BLUE", telemetry, 50);
-
-        //DriveTrain.cartesianDriveTimer(-.4, 0, 5);
-
-        DriveTrain.cartesianDriveTimer(0, -.2, 5);
-
+        Auto.goToPosition(3 * Constants.COUNTS_PER_INCH, .15, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
     }
 
     private void initVuforia() {

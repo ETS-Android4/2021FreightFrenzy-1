@@ -29,9 +29,9 @@ public class Intake {
 
     //Servo Constants
     private static final double FRONT_UP = .9;
-    private static final double FRONT_DOWN = .03;
+    private static final double FRONT_DOWN = .0;
     private static final double BACK_UP = .1;
-    private static final double BACK_DOWN = .64;
+    private static final double BACK_DOWN = .83;
 
     //Intake State
     private static INTAKE_STATE currentState = INTAKE_STATE.OFF;
@@ -90,17 +90,17 @@ public class Intake {
 
     public static void setFrontConstant(){
         int sum = 0;
-        for(int i = 0; i < 20; i++){
+        for(int i = 0; i < 10; i++){
             sum += intakeFrontSensor.red();
         }
-        FRONT_SENSOR = (sum / 20) + 50;
+        FRONT_SENSOR = (sum / 10) + 50;
     }
     public static void setBackConstant(){
         int sum = 0;
-        for(int i = 0; i < 20; i++){
+        for(int i = 0; i < 10; i++){
             sum += intakeBackSensor.red();
         }
-        BACK_SENSOR = (sum / 20) + 50;
+        BACK_SENSOR = (sum / 10) + 50;
     }
 
     public static void changeIntakeBackwards(){

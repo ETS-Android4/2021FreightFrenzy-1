@@ -23,7 +23,7 @@ public class Auto {
         deadWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         deadWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        deadWheel.setDirection(DcMotorSimple.Direction.REVERSE);
+        //deadWheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
         DriveTrain.blinkinLedDriver.close();
     }
@@ -119,6 +119,48 @@ public class Auto {
     }
     */
 
+    public static void goToPositionIntake(double targetYPos, double power, double allowedError, Telemetry telemetry, boolean opMode) throws InterruptedException{
+        double distance = Math.abs(targetYPos - getYPositon());
+        double initialDistance = Math.abs(targetYPos - getYPositon());
+        double yMultiplier = 1.08;
+        double rrMultipler = 2.25;
+
+        telemetry.addData("Distance To Y", distance);
+        telemetry.update();
+
+        while(opMode && (distance > allowedError) && !Intake.ballInFrontSensor() && !Intake.ballInBackSensor()){
+            distance = Math.abs(targetYPos - getYPositon());
+
+            double robotMovementYComponent = calculateY(0, power);
+
+            if(distance/initialDistance < .25){
+                yMultiplier += 0.1;
+            }
+
+            if(power >= 0){
+                DriveTrain.leftFront.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
+                DriveTrain.rightFront.setPower(robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler);// + feedForward
+                DriveTrain.leftBack.setPower  (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
+                DriveTrain.rightBack.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
+            }
+            else if (power < 0){
+                DriveTrain.leftFront.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
+                DriveTrain.rightFront.setPower(robotMovementYComponent * (distance/initialDistance) * yMultiplier);// + feedForward
+                DriveTrain.leftBack.setPower  (robotMovementYComponent * (distance/initialDistance) * yMultiplier); //+ feedForward
+                DriveTrain.rightBack.setPower (robotMovementYComponent * (distance/initialDistance) * yMultiplier * rrMultipler); //+ feedForward
+            }
+
+            telemetry.addData("Distance To Y", distance);
+            telemetry.addData("Left front power: ", DriveTrain.leftFront.getPower());
+            telemetry.update();
+        }
+
+        DriveTrain.leftFront.setPower(0);
+        DriveTrain.leftBack.setPower(0);
+        DriveTrain.rightFront.setPower(0);
+        DriveTrain.rightBack.setPower(0);
+    }
+
     public static void goToPosition(double targetYPos, double power, double allowedError, Telemetry telemetry, boolean opMode) throws InterruptedException{
         double distance = Math.abs(targetYPos - getYPositon());
         double initialDistance = Math.abs(targetYPos - getYPositon());
@@ -133,7 +175,7 @@ public class Auto {
 
             double robotMovementYComponent = calculateY(0, power);
 
-            if(distance/initialDistance < .25){
+            if(distance/initialDistance < .25){ //.25
                 yMultiplier += 0.1;
             }
 
@@ -238,6 +280,42 @@ public class Auto {
         deadWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public static void rotateColor(double y, int timer, Telemetry telemetry) {
+        double currentColorFront;
+        double currentColorBack;
+        double exitValueFront;
+        double exitValueBack;
+        int timerLength = timer;
+
+        currentColorFront = Double.MIN_VALUE;
+        currentColorBack = Double.MIN_VALUE;
+        exitValueFront = Double.MAX_VALUE;
+        exitValueBack = Double.MAX_VALUE;
+
+        while ((currentColorFront < exitValueFront && currentColorBack < exitValueBack) && timerLength >= 0) {
+            exitValueFront = Intake.getFrontConstant();
+            exitValueBack = Intake.getBackConstant();
+
+            if(y < 0) {
+                DriveTrain.leftBack.setPower(y * Constants.TELEOP_LIMITER);
+                DriveTrain.rightFront.setPower(-y * Constants.TELEOP_LIMITER);
+            }
+            if(y > 0) {
+                DriveTrain.leftFront.setPower(y * Constants.TELEOP_LIMITER);
+                DriveTrain.rightBack.setPower(-y * Constants.TELEOP_LIMITER);
+            }
+
+            currentColorFront = Intake.intakeFrontSensor.red();
+            currentColorBack = Intake.intakeBackSensor.red();
+
+            timerLength--;
+        }
+        DriveTrain.leftFront.setPower(0);
+        DriveTrain.leftBack.setPower(0);
+        DriveTrain.rightFront.setPower(0);
+        DriveTrain.rightBack.setPower(0);
+    }
+
     public static void driveIntakeColor(double y, int timer, Telemetry telemetry) {
         double currentColorFront;
         double currentColorBack;
@@ -299,7 +377,7 @@ public class Auto {
         int i = 0;
         do{
             i++;
-            if(i == 50)
+            if(i == 16)
                 Intake.setBackwards();
             if(DriveTrain.wallColorSensor.alpha() > maxWhite){
                 maxWhite = DriveTrain.wallColorSensor.alpha();
@@ -319,9 +397,10 @@ public class Auto {
                 DriveTrain.leftBack.setPower(power);
                 DriveTrain.rightBack.setPower(power * multiplier);
             }
-            if(Arm.ballInGondola()){
+            /*if(Arm.ballInGondola()){
                 Intake.setBackwards();
             }
+             */
             telemetry.addData("Max White: ", maxWhite);
             telemetry.addData("Min White: ", minWhite);
             telemetry.update();

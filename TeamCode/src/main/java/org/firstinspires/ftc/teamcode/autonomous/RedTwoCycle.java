@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import java.util.List;
 
 @Autonomous(name= "RedTwoCycle", group= "Autonomous")
+@Disabled
 
 public class RedTwoCycle extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";

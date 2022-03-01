@@ -25,6 +25,7 @@ public class Arm {
 
     //Constants for flicker servo
     private static final double VIBRATOR_CLOSED = 0.14;
+    private static final double VIBRATOR_OPEN_AUTO = .26;
     private static final double VIBRATOR_OPEN = 0.4;
 
     //Constants for height servos
@@ -37,7 +38,7 @@ public class Arm {
     //Constants for arm powers
     private static final double ARM_FAST = .95;
     private static final double ARM_MED = .8;
-    private static final double ARM_SLOW = .2;
+    private static final double ARM_SLOW = .55;
     private static String speed = "FAST";
 
     //Constants for sensors
@@ -127,8 +128,21 @@ public class Arm {
     }
 
     public static void releaseFreight() throws InterruptedException {
-        vibrator.setPosition(VIBRATOR_OPEN);
+        if(currentHeightState == HEIGHT_STATE.DOWN){
+            vibrator.setPosition(VIBRATOR_OPEN_AUTO);
+        }
+        else{
+            vibrator.setPosition(VIBRATOR_OPEN);
+        }
         Thread.sleep(300);
+        vibrator.setPosition(VIBRATOR_CLOSED);
+    }
+
+    public static void releaseFreightOpen() throws InterruptedException {
+        vibrator.setPosition(VIBRATOR_OPEN_AUTO);
+    }
+
+    public static void releaseFreightClose() throws InterruptedException {
         vibrator.setPosition(VIBRATOR_CLOSED);
     }
 
@@ -154,8 +168,8 @@ public class Arm {
 
     public static void armOutUpSlow(){
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        while(arm.getCurrentPosition() < 1000){
-            arm.setTargetPosition(1000);
+        while(arm.getCurrentPosition() < 1050){
+            arm.setTargetPosition(1050);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(ARM_MED);
         }
@@ -166,8 +180,8 @@ public class Arm {
 
     public static void armOutMid(){
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        while(arm.getCurrentPosition() < 950){
-            arm.setTargetPosition(950);
+        while(arm.getCurrentPosition() < 975){
+            arm.setTargetPosition(975);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(ARM_FAST);
         }
@@ -221,7 +235,7 @@ public class Arm {
 
     public static void armOutUpFast(){
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setTargetPosition(1000);
+        arm.setTargetPosition(1050);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(ARM_FAST);
     }

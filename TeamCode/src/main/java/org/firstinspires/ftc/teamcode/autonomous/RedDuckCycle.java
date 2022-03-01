@@ -79,7 +79,7 @@ public class RedDuckCycle extends LinearOpMode {
 
         Auto.resetEncoder();
 
-        Auto.goToPosition(23 * Constants.COUNTS_PER_INCH, .25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.goToPosition(26 * Constants.COUNTS_PER_INCH, .25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
         Auto.autoBrake(50);
@@ -126,7 +126,7 @@ public class RedDuckCycle extends LinearOpMode {
 
             Arm.arm.setPower(0);
 
-            Arm.armIn();
+            Arm.armInNoReset();
         } else if(label.equals("LEFT")){
             Arm.armDown();
 
@@ -140,7 +140,7 @@ public class RedDuckCycle extends LinearOpMode {
 
             Arm.arm.setPower(0);
 
-            Arm.armIn();
+            Arm.armInNoReset();
         }
         else if(label.equals("MIDDLE")){
             Arm.armMid();
@@ -155,20 +155,19 @@ public class RedDuckCycle extends LinearOpMode {
 
             Arm.arm.setPower(0);
 
-            Arm.armIn();
+            Arm.armInNoReset();
         }
-
-
-        Arm.armDown();
+        Arm.armUp();
 
         sleep(500);
 
         Auto.resetEncoder();
 
-        Auto.goToPosition(-11 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        DriveTrain.setRunMode("RUN_USING_ENCODER");
+
+        Auto.goToPosition(-8 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
-        Auto.autoBrake(50);
     }
 
     private void initVuforia() {
