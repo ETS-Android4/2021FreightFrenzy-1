@@ -27,7 +27,7 @@ public class TensorFlowTest extends LinearOpMode {
 
         if (tfod != null) {
             tfod.activate();
-            tfod.setZoom(1, 16.0/9.0);
+            tfod.setZoom(1.5, 16.0/9.0);
         }
 
         waitForStart();
@@ -38,7 +38,7 @@ public class TensorFlowTest extends LinearOpMode {
                 // the last time that call was made.
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
 
-                if (updatedRecognitions != null) {
+                /*if (updatedRecognitions != null) {
                     telemetry.addData("# Object Detected", updatedRecognitions.size());
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
@@ -58,6 +58,8 @@ public class TensorFlowTest extends LinearOpMode {
                     }
                     //telemetry.update();
                 }
+
+                 */
 
 
                 /*if(updatedRecognitions != null){
@@ -97,6 +99,7 @@ public class TensorFlowTest extends LinearOpMode {
                                     label = "Right";
                                 }
                             }
+                            telemetry.addData("Left cord: ", recognition.getLeft());
                         }
                     }
                     else{

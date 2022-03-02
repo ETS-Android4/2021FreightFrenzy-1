@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -32,6 +33,8 @@ public class RedMainAuto extends LinearOpMode {
     public boolean block;
 
     private static List<Recognition> tfodRecogntions;
+
+    public static ElapsedTime timeyBoi = new ElapsedTime();
 
     public void runOpMode() throws InterruptedException {
         DriveTrain.initDriveTrain(hardwareMap);
@@ -106,6 +109,8 @@ public class RedMainAuto extends LinearOpMode {
 
         waitForStart();
 
+        super.resetStartTime();
+
         Intake.backIntakeDown();
 
         if(label == null || label.equals("RIGHT")) {
@@ -178,17 +183,16 @@ public class RedMainAuto extends LinearOpMode {
                 Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Arm.slideArm(-.25);
 
-                while(!block){
-                    Auto.driveIntakeColor(-.15, 25, telemetry);
+                int turn = 0;
+                while(!block && super.getRuntime() < 28){
+                    if(turn != 0)
+                        Auto.driveIntakeColor(-.20, 25, telemetry);
+                    Auto.rotateColor(-.35, 25, telemetry);
                     if(Intake.ballInBackSensor())
                         block = true;
-                    if(!block){
-                        Auto.rotateColor(-.2, 35, telemetry);
-                        if(Intake.ballInBackSensor())
-                            block = true;
-                    }
-                    if(!block)
-                        DriveTrain.cartesianDriveTimer(.8, .2, 20);
+                    else if(!block)
+                        DriveTrain.cartesianDriveTimer(.8, .25, 15);
+                    turn++;
                 }
 
                 if(super.getRuntime() <= 26){
@@ -204,7 +208,7 @@ public class RedMainAuto extends LinearOpMode {
 
                     if(Arm.ballInGondola()) {
                         arm = true;
-                        Arm.armOutUpFast();
+                        Arm.armOutUpFastRed();
                     }
 
                     Auto.resetEncoder();
@@ -215,7 +219,7 @@ public class RedMainAuto extends LinearOpMode {
                         while (!Arm.ballInGondola());
                         if(super.getRuntime() <= 28){
                             Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                            Arm.armOutUp();
+                            Arm.armOutUpRed();
                         }
                         else{
                             Arm.releaseFreightClose();
@@ -228,7 +232,7 @@ public class RedMainAuto extends LinearOpMode {
                         Arm.armOutUp();
                     }
                     else if(arm){
-                        while (Arm.getArmPos() < 1050);
+                        while (Arm.getArmPos() < 1075);
                     }
 
                     Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -284,7 +288,7 @@ public class RedMainAuto extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.3f;
+        tfodParameters.minResultConfidence = 0.6f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 800;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);

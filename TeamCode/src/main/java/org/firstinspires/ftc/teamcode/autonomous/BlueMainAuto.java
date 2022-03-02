@@ -181,17 +181,19 @@ public class BlueMainAuto extends LinearOpMode {
                 Intake.setFrontConstant();
                 Intake.setBackConstant();
 
-                while(!block){
-                    Auto.driveIntakeColor(.25, 30, telemetry);
+                Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Arm.slideArm(-.25);
+
+                int turn = 0;
+                while(!block && super.getRuntime() < 28){
+                    if(turn != 0)
+                        Auto.driveIntakeColor(.20, 25, telemetry);
+                    Auto.rotateColor(.35, 25, telemetry);
                     if(Intake.ballInFrontSensor())
                         block = true;
-                    if(!block){
-                        Auto.rotateColor(.25, 20, telemetry);
-                        if(Intake.ballInFrontSensor())
-                            block = true;
-                    }
-                    if(!block)
-                        DriveTrain.cartesianDriveTimer(.8, -.25, 25);
+                    else if(!block)
+                        DriveTrain.cartesianDriveTimer(.8, -.25, 15);
+                    turn++;
                 }
 
                 if(super.getRuntime() <= 26){
@@ -212,7 +214,7 @@ public class BlueMainAuto extends LinearOpMode {
 
                     Auto.resetEncoder();
 
-                    Auto.goToPosition(-5 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH * 3, telemetry, opModeIsActive());
+                    Auto.goToPosition(-4.5 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH * 3, telemetry, opModeIsActive());
 
                     if(!Arm.ballInGondola() && !arm) {
                         while (!Arm.ballInGondola()){
@@ -292,7 +294,7 @@ public class BlueMainAuto extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.3f;
+        tfodParameters.minResultConfidence = 0.6f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 800;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);

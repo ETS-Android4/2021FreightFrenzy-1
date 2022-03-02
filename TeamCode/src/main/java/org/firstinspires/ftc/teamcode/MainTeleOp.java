@@ -35,6 +35,7 @@ public class MainTeleOp extends LinearOpMode{
     private boolean backIntakeFlag;
     private boolean frontIntake = true;
     private boolean robotBackwards = false;
+    private boolean armHolding = false;
     private String color = "BLUE";
 
     public void runOpMode() throws InterruptedException {
@@ -100,6 +101,7 @@ public class MainTeleOp extends LinearOpMode{
                 DriveTrain.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
                 robotBackwards = true;
                 vibrated = false;
+                armHolding = true;
                 if(Intake.ballInFrontSensor()) {
                     frontIntake = true;
                     DriveTrain.customDriveNoTimer(-.8, -.8, -.8, -.8);
@@ -117,19 +119,26 @@ public class MainTeleOp extends LinearOpMode{
                 intakeTimer++;
             }
 
-            if(intakeTimer == 2){
+            if(armHolding)
+                Arm.slideArm(-.2);
+
+            if(intakeTimer == 4){
                 DriveTrain.customDriveNoTimer(0, 0, 0, 0);
                 robotBackwards = false;
             }
 
             //When timer finishes, spin intake backwards
-            if(intakeTimer > 13 && !backwardsFlag){
+            if(intakeTimer > 10 && !backwardsFlag){
                 Intake.changeIntakeBackwards();
                 backwardsFlag = true;
                 ballInIntake = false;
             }
 
             if(Arm.ballInGondola()){
+                if(armHolding){
+                    Arm.stopArm();
+                    armHolding = false;
+                }
                 Intake.changeIntakeOff();
                 ballInGondola = true;
                 backwardsFlag = false;
@@ -176,7 +185,7 @@ public class MainTeleOp extends LinearOpMode{
             }
 
             //Extend/retract arm fast
-            if (gamepad2.right_trigger > .2 && !armFlagFast && !armInAuto && !armOutAuto && ballInGondola) {
+            if (gamepad2.right_trigger > .2 && !armFlagFast && !armInAuto && !armOutAuto && !armHolding) {
                 armFlagFast = true;
                 Arm.armChangeState("OUT");
             }
@@ -205,10 +214,9 @@ public class MainTeleOp extends LinearOpMode{
                 Arm.arm.setPower(-0.6);
             }
 
-            if(Arm.getArmPos() < 10 && armInAuto){
+            if(Arm.getArmPos() < 50 && armInAuto){
                 Arm.arm.setPower(0);
                 Arm.changeArmIn();
-                Arm.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armInAuto = false;
             }
@@ -228,7 +236,6 @@ public class MainTeleOp extends LinearOpMode{
                 armOutAuto = false;
             }
 
-
             if(gamepad2.dpad_left) {
                 Arm.releaseFreight();
                 ballInGondola = false;
@@ -243,8 +250,12 @@ public class MainTeleOp extends LinearOpMode{
                 else
                     Intake.backIntakeDown();
             }
+
             if(!Arm.ballInGondola()){
                 ballInGondola = false;
+            }
+            else if(Arm.ballInGondola()){
+                ballInGondola = true;
             }
 
             /*****Arm Height*****/
@@ -268,7 +279,7 @@ public class MainTeleOp extends LinearOpMode{
 
             //Update States
             Carousel.carouselUpdatePosition(gamepad1.right_trigger);
-            if(!armInAuto && !armOutAuto)
+            if(!armInAuto && !armOutAuto && !armHolding)
                 Arm.armUpdatePosition();
             Intake.intakeUpdatePosition();
             Arm.heightUpdatePosition();
@@ -369,14 +380,14 @@ public class MainTeleOp extends LinearOpMode{
 
             telemetry.addData("Left front: ", DriveTrain.leftFront.getCurrentPosition());
 
-
+            */
             telemetry.addData("Distance to gondola: ", Arm.armSensor.getDistance(DistanceUnit.CM));
-
+            /*
             telemetry.addData("Distance to hub: ", Arm.gondolaSensor.getDistance(DistanceUnit.CM));
 
             telemetry.addData("Dead Wheel pos: ", Auto.getYPositon());
             */
-            //telemetry.addData("Arm pos: ", Arm.getArmPos());
+            telemetry.addData("Arm pos: ", Arm.getArmPos());
             /*
             DriveTrain.gyroTele(telemetry);
 
@@ -389,7 +400,7 @@ public class MainTeleOp extends LinearOpMode{
             telemetry.addData("Back constant: ", Intake.getBackConstant());
 */
             //telemetry.addData("i: ", i);
-            //telemetry.update();
+            telemetry.update();
 
         }
     }

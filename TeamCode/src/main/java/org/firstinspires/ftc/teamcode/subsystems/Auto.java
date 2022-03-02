@@ -297,12 +297,12 @@ public class Auto {
             exitValueBack = Intake.getBackConstant();
 
             if(y < 0) {
-                DriveTrain.leftBack.setPower(y * Constants.TELEOP_LIMITER);
-                DriveTrain.rightFront.setPower(-y * Constants.TELEOP_LIMITER);
+                DriveTrain.leftBack.setPower(y);
+                DriveTrain.rightFront.setPower(-y);
             }
             if(y > 0) {
-                DriveTrain.leftFront.setPower(y * Constants.TELEOP_LIMITER);
-                DriveTrain.rightBack.setPower(-y * Constants.TELEOP_LIMITER);
+                DriveTrain.leftFront.setPower(y);
+                DriveTrain.rightBack.setPower(-y);
             }
 
             currentColorFront = Intake.intakeFrontSensor.red();

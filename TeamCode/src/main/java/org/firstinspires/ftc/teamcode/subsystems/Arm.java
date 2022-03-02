@@ -25,7 +25,8 @@ public class Arm {
 
     //Constants for flicker servo
     private static final double VIBRATOR_CLOSED = 0.14;
-    private static final double VIBRATOR_OPEN_AUTO = .26;
+    private static final double VIBRATOR_OPEN_AUTO = .32;
+    private static final double VIBRATOR_OPEN_SHARED = .26;
     private static final double VIBRATOR_OPEN = 0.4;
 
     //Constants for height servos
@@ -129,7 +130,7 @@ public class Arm {
 
     public static void releaseFreight() throws InterruptedException {
         if(currentHeightState == HEIGHT_STATE.DOWN){
-            vibrator.setPosition(VIBRATOR_OPEN_AUTO);
+            vibrator.setPosition(VIBRATOR_OPEN_SHARED);
         }
         else{
             vibrator.setPosition(VIBRATOR_OPEN);
@@ -158,6 +159,18 @@ public class Arm {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         while(arm.getCurrentPosition() < 1050){
             arm.setTargetPosition(1050);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(ARM_FAST);
+        }
+        arm.setPower(0);
+        currentArmState = ARM_STATE.OUT;
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public static void armOutUpRed(){
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while(arm.getCurrentPosition() < 1075){
+            arm.setTargetPosition(1075);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(ARM_FAST);
         }
@@ -236,6 +249,13 @@ public class Arm {
     public static void armOutUpFast(){
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setTargetPosition(1050);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(ARM_FAST);
+    }
+
+    public static void armOutUpFastRed(){
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setTargetPosition(1075);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(ARM_FAST);
     }
