@@ -446,6 +446,70 @@ public class Auto {
 
     }
 
+    public static void driveWallColorCarousel(double power, Telemetry telemetry) throws InterruptedException {
+        double multiplier = 2.25;
+
+        double minWhite = Double.MAX_VALUE;
+        double maxWhite = Double.MIN_VALUE;
+        double exitValue = DriveTrain.wallColorSensor.alpha() + 200;
+
+        int i = 0;
+        do{
+            if(DriveTrain.wallColorSensor.alpha() > maxWhite){
+                maxWhite = DriveTrain.wallColorSensor.alpha();
+            }
+            if (DriveTrain.wallColorSensor.alpha() < minWhite){
+                minWhite = DriveTrain.wallColorSensor.alpha();
+            }
+            if(power >= 0){
+                DriveTrain.leftFront.setPower(power);
+                DriveTrain.rightFront.setPower(power * multiplier);
+                DriveTrain.leftBack.setPower(power * multiplier);
+                DriveTrain.rightBack.setPower(power);
+            }
+            else if (power < 0) {
+                DriveTrain.leftFront.setPower(power * multiplier);
+                DriveTrain.rightFront.setPower(power);
+                DriveTrain.leftBack.setPower(power);
+                DriveTrain.rightBack.setPower(power * multiplier);
+            }
+            telemetry.addData("Max White: ", maxWhite);
+            telemetry.addData("Min White: ", minWhite);
+            telemetry.update();
+        }while(maxWhite < exitValue && DriveTrain.wallColorSensor.alpha() < exitValue);
+
+        minWhite = Double.MAX_VALUE;
+        maxWhite = Double.MIN_VALUE;
+
+        do{
+            if(DriveTrain.wallColorSensor.alpha() > maxWhite){
+                maxWhite = DriveTrain.wallColorSensor.alpha();
+            }
+            if (DriveTrain.wallColorSensor.alpha() < minWhite){
+                minWhite = DriveTrain.wallColorSensor.alpha();
+            }
+            if(power >= 0){
+                DriveTrain.leftFront.setPower(power);
+                DriveTrain.rightFront.setPower(power * multiplier);
+                DriveTrain.leftBack.setPower(power * multiplier);
+                DriveTrain.rightBack.setPower(power);
+            }
+            else if (power < 0){
+                DriveTrain.leftFront.setPower(power * multiplier);
+                DriveTrain.rightFront.setPower(power);
+                DriveTrain.leftBack.setPower(power);
+                DriveTrain.rightBack.setPower(power * multiplier);
+            }
+            telemetry.addData("Max White: ", maxWhite);
+            telemetry.addData("Min White: ", minWhite);
+            telemetry.update();
+        }while(maxWhite > exitValue && DriveTrain.wallColorSensor.alpha() > exitValue);
+        DriveTrain.leftFront.setPower(0);
+        DriveTrain.rightFront.setPower(0);
+        DriveTrain.leftBack.setPower(0);
+        DriveTrain.rightBack.setPower(0);
+
+    }
     public static void powerMotors(double power){
         DriveTrain.leftFront.setPower(power);
         DriveTrain.leftBack.setPower(power);

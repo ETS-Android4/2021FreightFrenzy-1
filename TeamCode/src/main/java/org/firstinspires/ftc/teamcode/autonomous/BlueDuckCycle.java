@@ -58,11 +58,11 @@ public class BlueDuckCycle extends LinearOpMode {
                 marker = false;
             }
             if(!marker) {
-                if (recognition.getLeft() < 135) {
+                if (recognition.getLeft() < 215) {
                     label = "LEFT";
-                } else if (recognition.getLeft() >= 135 && recognition.getLeft() <= 386) {
+                } else if (recognition.getLeft() >= 215 && recognition.getLeft() <= 306) {
                     label = "MIDDLE";
-                } else if (recognition.getLeft() > 386) {
+                } else if (recognition.getLeft() > 306) {
                     label = "RIGHT";
                 } else {
                     label = "None";
@@ -86,11 +86,11 @@ public class BlueDuckCycle extends LinearOpMode {
                     marker = false;
                 }
                 if(!marker) {
-                    if (recognition.getLeft() < 135) {
+                    if (recognition.getLeft() < 185) {
                         label = "LEFT";
-                    } else if (recognition.getLeft() >= 135 && recognition.getLeft() <= 386) {
+                    } else if (recognition.getLeft() >= 185 && recognition.getLeft() <= 336) {
                         label = "MIDDLE";
-                    } else if (recognition.getLeft() > 386) {
+                    } else if (recognition.getLeft() > 336) {
                         label = "RIGHT";
                     } else {
                         label = "None";
@@ -110,7 +110,7 @@ public class BlueDuckCycle extends LinearOpMode {
 
         sleep(1000);
 
-        Carousel.spin(-.18);
+        Carousel.spin(.18);
 
         sleep(3500);
 
@@ -122,33 +122,44 @@ public class BlueDuckCycle extends LinearOpMode {
 
         Auto.powerMotors(0);
 
-        DriveTrain.cartesianDriveTimer(-.4, 0, 25);
+        //DriveTrain.cartesianDriveTimer(-.4, 0, 25);
 
-        DriveTrain.customDrive(-.4, -.4, .4, .4, 12500);
+        Auto.resetEncoder();
+
+        Auto.goToPosition(3 * Constants.COUNTS_PER_INCH, .2, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+
+        DriveTrain.gyroTurn(5 * Math.PI / 6, 500);
+        //DriveTrain.customDrive(-.4, -.4, .4, .4, 15000);
 
         DriveTrain.resetGyro();
 
+        Auto.resetEncoder();
+
+        Auto.goToPosition(-2 * Constants.COUNTS_PER_INCH, -.2, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+
+        Auto.resetEncoder();
+
         DriveTrain.cartesianDriveTimer(.8, 0, 30);
 
-        DriveTrain.driveToLineBlue(-.1,"WHITE", telemetry);
+        if(Auto.getYPositon() < 0)
+            Auto.goToPosition(0 * Constants.COUNTS_PER_INCH, .2, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+
+        Auto.driveWallColorCarousel(-.05, telemetry);
 
         Auto.resetEncoder();
 
         DriveTrain.setRunMode("RUN_USING_ENCODER");
 
-        Auto.goToPosition(5 * Constants.COUNTS_PER_INCH, .15, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
-        sleep(100);
+        //sleep(1000);
 
-        Auto.autoBrake(50);
+        //Auto.goToPosition(2 * Constants.COUNTS_PER_INCH, .1, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
 
         if(label == null || label.equals("RIGHT")) {
             Arm.armFar();
 
             sleep(750);
 
-            Arm.armOutLong();
-
-            Arm.arm.setPower(.3);
+            Arm.armOutUpLong();
 
             Arm.releaseFreight();
 
@@ -161,8 +172,6 @@ public class BlueDuckCycle extends LinearOpMode {
             sleep(100);
 
             Arm.armOutLong();
-
-            Arm.arm.setPower(.3);
 
             Arm.releaseFreight();
 
@@ -177,8 +186,6 @@ public class BlueDuckCycle extends LinearOpMode {
 
             Arm.armOutLong();
 
-            Arm.arm.setPower(.3);
-
             Arm.releaseFreight();
 
             Arm.arm.setPower(0);
@@ -189,7 +196,7 @@ public class BlueDuckCycle extends LinearOpMode {
 
         Auto.resetEncoder();
 
-        Auto.goToPosition(3 * Constants.COUNTS_PER_INCH, .15, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.goToPosition(7 * Constants.COUNTS_PER_INCH, .15, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
     }
 
     private void initVuforia() {

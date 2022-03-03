@@ -380,15 +380,15 @@ public class MainTeleOp extends LinearOpMode{
 
             telemetry.addData("Left front: ", DriveTrain.leftFront.getCurrentPosition());
 
-            */
+
             telemetry.addData("Distance to gondola: ", Arm.armSensor.getDistance(DistanceUnit.CM));
-            /*
+
             telemetry.addData("Distance to hub: ", Arm.gondolaSensor.getDistance(DistanceUnit.CM));
 
             telemetry.addData("Dead Wheel pos: ", Auto.getYPositon());
-            */
+
             telemetry.addData("Arm pos: ", Arm.getArmPos());
-            /*
+
             DriveTrain.gyroTele(telemetry);
 
 
@@ -400,7 +400,7 @@ public class MainTeleOp extends LinearOpMode{
             telemetry.addData("Back constant: ", Intake.getBackConstant());
 */
             //telemetry.addData("i: ", i);
-            telemetry.update();
+            //telemetry.update();
 
         }
     }

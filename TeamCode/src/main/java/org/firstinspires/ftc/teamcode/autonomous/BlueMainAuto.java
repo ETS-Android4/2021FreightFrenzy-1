@@ -92,11 +92,11 @@ public class BlueMainAuto extends LinearOpMode {
                     marker = false;
                 }
                 if(!marker) {
-                    if (recognition.getLeft() < 135) {
+                    if (recognition.getLeft() < 185) {
                         label = "LEFT";
-                    } else if (recognition.getLeft() >= 135 && recognition.getLeft() <= 386) {
+                    } else if (recognition.getLeft() >= 185 && recognition.getLeft() <= 336) {
                         label = "MIDDLE";
-                    } else if (recognition.getLeft() > 386) {
+                    } else if (recognition.getLeft() > 336) {
                         label = "RIGHT";
                     } else {
                         label = "None";
@@ -196,7 +196,7 @@ public class BlueMainAuto extends LinearOpMode {
                     turn++;
                 }
 
-                if(super.getRuntime() <= 26){
+                if(super.getRuntime() <= 25){
                     Intake.frontIntakeUp();
 
                     Arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

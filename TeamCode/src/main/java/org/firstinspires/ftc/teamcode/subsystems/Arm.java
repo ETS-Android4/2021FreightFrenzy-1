@@ -217,8 +217,20 @@ public class Arm {
 
     public static void armOutLong(){
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        while(arm.getCurrentPosition() < 1300){
-            arm.setTargetPosition(1400);
+        while(arm.getCurrentPosition() < 1350){
+            arm.setTargetPosition(1350);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(ARM_FAST);
+        }
+        arm.setPower(0);
+        currentArmState = ARM_STATE.OUT;
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public static void armOutUpLong(){
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while(arm.getCurrentPosition() < 1415){
+            arm.setTargetPosition(1415);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(ARM_FAST);
         }
@@ -265,7 +277,7 @@ public class Arm {
     }
 
     public static boolean armIsIn(){
-        if(currentArmState == ARM_STATE.IN)
+        if(arm.getCurrentPosition() < 200)
             return true;
         else
             return false;

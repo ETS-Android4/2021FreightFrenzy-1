@@ -53,7 +53,7 @@ public class RedDuckCycle extends LinearOpMode {
 
         sleep(500);
 
-        Carousel.spin(.16);
+        Carousel.spin(-.16);
 
         sleep(4000);
 
@@ -73,13 +73,20 @@ public class RedDuckCycle extends LinearOpMode {
 
         //DriveTrain.cartesianDriveTimer(0, .25, 5);
 
-        DriveTrain.driveToLineBlue(-.15,"RED", telemetry);
+        Auto.resetEncoder();
+
+        Auto.goToPosition(-3 * Constants.COUNTS_PER_INCH, -.2, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        sleep(100);
 
         DriveTrain.resetGyro();
 
         Auto.resetEncoder();
 
-        Auto.goToPosition(26 * Constants.COUNTS_PER_INCH, .25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.driveWallColorCarousel(.05, telemetry);
+
+        Auto.resetEncoder();
+
+        Auto.goToPosition(6 * Constants.COUNTS_PER_INCH, .1, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
         Auto.autoBrake(50);
@@ -97,11 +104,11 @@ public class RedDuckCycle extends LinearOpMode {
                     marker = false;
                 }
                 if(!marker) {
-                    if (recognition.getLeft() < 135) {
+                    if (recognition.getLeft() < 215) {
                         label = "RIGHT";
-                    } else if (recognition.getLeft() >= 135 && recognition.getLeft() <= 386) {
+                    } else if (recognition.getLeft() >= 215 && recognition.getLeft() <= 306) {
                         label = "MIDDLE";
-                    } else if (recognition.getLeft() > 386) {
+                    } else if (recognition.getLeft() > 306) {
                         label = "LEFT";
                     } else {
                         label = "None";
@@ -118,7 +125,7 @@ public class RedDuckCycle extends LinearOpMode {
 
             sleep(750);
 
-            Arm.armOutLong();
+            Arm.armOutUpLong();
 
             Arm.arm.setPower(.3);
 
@@ -165,7 +172,7 @@ public class RedDuckCycle extends LinearOpMode {
 
         DriveTrain.setRunMode("RUN_USING_ENCODER");
 
-        Auto.goToPosition(-8 * Constants.COUNTS_PER_INCH, -.25, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
+        Auto.goToPosition(-8 * Constants.COUNTS_PER_INCH, -.15, Constants.COUNTS_PER_INCH, telemetry, opModeIsActive());
         sleep(100);
 
     }
